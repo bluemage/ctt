@@ -1,0 +1,575 @@
+#Can you please take the below code and make it work with the example code using the below code as the main section
+
+extends Node2D
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = "text"
+var cards = Array()
+var scards = Array()
+var discardpile = Array()
+var cardspicked = Array()
+var actual = Array()
+var cardcount = 0
+var handcount = 0
+var handcount2 = 0
+var showcard = null
+var cardn = Array()
+var cardc = Array()
+var s = Vector2()
+var lightpic = preload("res://assets/light.png")
+const cardscript = preload("res://cardname.gd")
+var backofdeck = preload("res://images/deckback.png")
+var inside = false
+var selectedcard = null
+var playedcard = null
+var firstrow = false
+var secondrow = false
+var cycle = 0
+var lastcycle = 0
+var lastCardPlayed = null
+var lastCardPlayedmem = null
+var lastcard = null
+var currentCardPlayed = null
+var trumps = false
+var wands = false
+var pentacles = false
+var cups = false
+var swords = false
+var valid = false
+var wildcard = false
+var countme = true
+var newGame = true
+var history = null
+var Opcc = false
+
+
+var deck = []
+var discard_pile = []
+var players = []
+var current_player = 0
+var current_suit = "hearts"
+var current_trump_number = -1
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	setCards()
+	scards = shuffle(cards)
+	#print(scards)
+	s.x = 0.5
+	s.y = 0.5
+	#pass # Replace with function body.
+	
+
+func setCards():
+	cards.append("00_Fool")
+	cards.append("01_Magician")
+	cards.append("02_High_Priestess")
+	cards.append("03_Empress")
+	cards.append("04_Emperor")
+	cards.append("05_Hierophant")
+	cards.append("06_Lovers")
+	cards.append("07_Chariot")
+	cards.append("08_Strength")
+	cards.append("09_Hermit")
+	cards.append("10_Wheel_of_Fortune")
+	cards.append("11_Justice")
+	cards.append("12_Hanged_Man")
+	cards.append("13_Death")
+	cards.append("14_Temperance")
+	cards.append("15_Devil")
+	cards.append("16_Tower")
+	cards.append("17_Star")
+	cards.append("18_Moon")
+	cards.append("19_Sun")
+	cards.append("20_Judgement")
+	cards.append("21_World")
+	cards.append("22_Ace_of_Wands")
+	cards.append("23_Two_of_Wands")
+	cards.append("24_Three_of_Wands")
+	cards.append("25_Four_of_Wands")
+	cards.append("26_Five_of_Wands")
+	cards.append("27_Six_of_Wands")
+	cards.append("28_Seven_of_Wands")
+	cards.append("29_Eight_of_Wands")
+	cards.append("30_Nine_of_Wands")
+	cards.append("31_Ten_of_Wands")
+	cards.append("32_Page_of_Wands")
+	cards.append("33_Knight_of_Wands")
+	cards.append("34_Queen_of_Wands")
+	cards.append("35_King_of_Wands")
+	cards.append("36_Ace_of_Pentacles")
+	cards.append("37_Two_of_Pentacles")
+	cards.append("38_Three_of_Pentacles")
+	cards.append("39_Four_of_Pentacles")
+	cards.append("40_Five_of_Pentacles")
+	cards.append("41_Six_of_Pentacles")
+	cards.append("42_Seven_of_Pentacles")
+	cards.append("43_Eight_of_Pentacles")
+	cards.append("44_Nine_of_Pentacles")
+	cards.append("45_Ten_of_Pentacles")
+	cards.append("46_Page_of_Pentacles")
+	cards.append("47_Knight_of_Pentacles")
+	cards.append("48_Queen_of_Pentacles")
+	cards.append("49_King_of_Pentacles")
+	cards.append("50_Ace_of_Cups")
+	cards.append("51_Two_of_Cups")
+	cards.append("52_Three_of_Cups")
+	cards.append("53_Four_of_Cups")
+	cards.append("54_Five_of_Cups")
+	cards.append("55_Six_of_Cups")
+	cards.append("56_Seven_of_Cups")
+	cards.append("57_Eight_of_Cups")
+	cards.append("58_Nine_of_Cups")
+	cards.append("59_Ten_of_Cups")
+	cards.append("60_Page_of_Cups")
+	cards.append("61_Knight_of_Cups")
+	cards.append("62_Queen_of_Cups")
+	cards.append("63_King_of_Cups")
+	cards.append("64_Ace_of_Swords")
+	cards.append("65_Two_of_Swords")
+	cards.append("66_Three_of_Swords")
+	cards.append("67_Four_of_Swords")
+	cards.append("68_Five_of_Swords")
+	cards.append("69_Six_of_Swords")
+	cards.append("70_Seven_of_Swords")
+	cards.append("71_Eight_of_Swords")
+	cards.append("72_Nine_of_Swords")
+	cards.append("73_Ten_of_Swords")
+	cards.append("74_Page_of_Swords")
+	cards.append("75_Knight_of_Swords")
+	cards.append("76_Queen_of_Swords")
+	cards.append("77_King_of_Swords")
+	
+	actual.append(preload("res://images/deck/00_Fool.png"))
+	actual.append(preload("res://images/deck/01_Magician.png"))
+	actual.append(preload("res://images/deck/02_High_Priestess.png"))
+	actual.append(preload("res://images/deck/03_Empress.png"))
+	actual.append(preload("res://images/deck/04_Emperor.png"))
+	actual.append(preload("res://images/deck/05_Hierophant.png"))
+	actual.append(preload("res://images/deck/06_Lovers.png"))
+	actual.append(preload("res://images/deck/07_Chariot.png"))
+	actual.append(preload("res://images/deck/08_Strength.png"))
+	actual.append(preload("res://images/deck/09_Hermit.png"))
+	actual.append(preload("res://images/deck/10_Wheel_of_Fortune.png"))
+	actual.append(preload("res://images/deck/11_Justice.png"))
+	actual.append(preload("res://images/deck/12_Hanged_Man.png"))
+	actual.append(preload("res://images/deck/13_Death.png"))
+	actual.append(preload("res://images/deck/14_Temperance.png"))
+	actual.append(preload("res://images/deck/15_Devil.png"))
+	actual.append(preload("res://images/deck/16_Tower.png"))
+	actual.append(preload("res://images/deck/17_Star.png"))
+	actual.append(preload("res://images/deck/18_Moon.png"))
+	actual.append(preload("res://images/deck/19_Sun.png"))
+	actual.append(preload("res://images/deck/20_Judgement.png"))
+	actual.append(preload("res://images/deck/21_World.png"))
+	actual.append(preload("res://images/deck/22_Ace_of_Wands.png"))
+	actual.append(preload("res://images/deck/23_Two_of_Wands.png"))
+	actual.append(preload("res://images/deck/24_Three_of_Wands.png"))
+	actual.append(preload("res://images/deck/25_Four_of_Wands.png"))
+	actual.append(preload("res://images/deck/26_Five_of_Wands.png"))
+	actual.append(preload("res://images/deck/27_Six_of_Wands.png"))
+	actual.append(preload("res://images/deck/28_Seven_of_Wands.png"))
+	actual.append(preload("res://images/deck/29_Eight_of_Wands.png"))
+	actual.append(preload("res://images/deck/30_Nine_of_Wands.png"))
+	actual.append(preload("res://images/deck/31_Ten_of_Wands.png"))
+	actual.append(preload("res://images/deck/32_Page_of_Wands.png"))
+	actual.append(preload("res://images/deck/33_Knight_of_Wands.png"))
+	actual.append(preload("res://images/deck/34_Queen_of_Wands.png"))
+	actual.append(preload("res://images/deck/35_King_of_Wands.png"))
+	actual.append(preload("res://images/deck/36_Ace_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/37_Two_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/38_Three_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/39_Four_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/40_Five_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/41_Six_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/42_Seven_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/43_Eight_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/44_Nine_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/45_Ten_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/46_Page_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/47_Knight_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/48_Queen_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/49_King_of_Pentacles.png"))
+	actual.append(preload("res://images/deck/50_Ace_of_Cups.png"))
+	actual.append(preload("res://images/deck/51_Two_of_Cups.png"))
+	actual.append(preload("res://images/deck/52_Three_of_Cups.png"))
+	actual.append(preload("res://images/deck/53_Four_of_Cups.png"))
+	actual.append(preload("res://images/deck/54_Five_of_Cups.png"))
+	actual.append(preload("res://images/deck/55_Six_of_Cups.png"))
+	actual.append(preload("res://images/deck/56_Seven_of_Cups.png"))
+	actual.append(preload("res://images/deck/57_Eight_of_Cups.png"))
+	actual.append(preload("res://images/deck/58_Nine_of_Cups.png"))
+	actual.append(preload("res://images/deck/59_Ten_of_Cups.png"))
+	actual.append(preload("res://images/deck/60_Page_of_Cups.png"))
+	actual.append(preload("res://images/deck/61_Knight_of_Cups.png"))
+	actual.append(preload("res://images/deck/62_Queen_of_Cups.png"))
+	actual.append(preload("res://images/deck/63_King_of_Cups.png"))
+	actual.append(preload("res://images/deck/64_Ace_of_Swords.png"))
+	actual.append(preload("res://images/deck/65_Two_of_Swords.png"))
+	actual.append(preload("res://images/deck/66_Three_of_Swords.png"))
+	actual.append(preload("res://images/deck/67_Four_of_Swords.png"))
+	actual.append(preload("res://images/deck/68_Five_of_Swords.png"))
+	actual.append(preload("res://images/deck/69_Six_of_Swords.png"))
+	actual.append(preload("res://images/deck/70_Seven_of_Swords.png"))
+	actual.append(preload("res://images/deck/71_Eight_of_Swords.png"))
+	actual.append(preload("res://images/deck/72_Nine_of_Swords.png"))
+	actual.append(preload("res://images/deck/73_Ten_of_Swords.png"))
+	actual.append(preload("res://images/deck/74_Page_of_Swords.png"))
+	actual.append(preload("res://images/deck/75_Knight_of_Swords.png"))
+	actual.append(preload("res://images/deck/76_Queen_of_Swords.png"))
+	actual.append(preload("res://images/deck/77_King_of_Swords.png"))
+	actual.append(preload("res://images/deckback.png"))
+
+func shuffle(cardsy):
+		# fisher-yates shuffle: given array with elements 0..n, 
+		# for each index i from n down to 1, pick a random index j 
+		# and swap elements at i and j.
+		
+		#var i
+		var j
+		var tmp
+		#i = cardsy.length() - 1
+		#for n in range(10,-1,-1):
+		#print(n)
+		for i in range(cardsy.size() - 1,0,-1):
+		#for (i = this.deck.length - 1; i > 0; i--) {
+		
+			randomize()
+			#var rando = randi() % 77
+			#j = Math.floor(Math.random() * (i + 1));
+			j = floor(randf() * (i + 1));
+			tmp = cardsy[i]#this.deck[i];
+			cardsy[i] = cardsy[j]
+			cardsy[j] = tmp
+			#this.deck[i] = this.deck[j];
+			#this.deck[j] = tmp;
+		return cardsy
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	
+	#func _init():
+	# Initialize deck, players, and discard pile
+	#pass
+
+
+	if (cardcount == 78):
+		#if(cardn == null):
+		#	cardn = Array()
+			#cardn.Clear()
+		#	cardn = Array()
+		#	cardn.Clear()
+		#	cardn[cardcount]
+		cardcount = 0
+		#setCards()
+		scards = shuffle(cards)
+		##print(scards)
+		#cardn = scards
+		##print(cardn)
+		##print(":cardn")
+		s.x = 0.5
+		s.y = 0.5
+		cycle = cycle + 1
+	#if (lastcycle < cycle):
+	#	scards = shuffle(cards)
+	#	print(scards)
+	#	s.x = 0.5
+	#	s.y = 0.5
+	#	lastcycle = cycle
+		#cardn = scards
+	if Input.is_action_just_released("mouseleft") && inside == false:
+		showcard = scards[cardcount].substr(0,2).to_int()
+		###print(String(showcard) + " " + scards[cardcount])
+		get_node("Sprite").texture = actual[showcard]
+		get_node("Label").text = scards[cardcount]
+		get_node("Label2").text = String(cardcount)
+		
+		cardn.append(TextureRect.new())
+		#if cycle == 1:
+		#	cardcount = cardcount + 78
+		#if(cardn != null):
+		if (cardn[cardcount] != null):
+			cardn[cardcount].set_script(cardscript)
+		var lighter = Light2D.new()
+		lighter.hide()
+		lighter.set_name("lighter")
+		lighter.texture = lightpic
+		lighter.position.x = 40
+		lighter.position.y = 70
+		lighter.scale = s
+		#cardc.append(Control.new())
+		cardn[cardcount].set_name("card" + String(cardcount))
+		cardn[cardcount].cardname = scards[cardcount]
+		#cardc[cardcount].set_name("cardc" + String(cardcount))
+		#cardn[cardcount].texture = actual[showcard] #
+		cardn[cardcount].texture = get_resized_texture(actual[showcard],80,140)
+		
+		
+		#cardn[cardcount].set_stretch_mode(3)
+		#cardn[cardcount].set_expand(true)
+		#cardn[cardcount].set_scale(s)
+		####print(cardn[cardcount].get_scale())
+		
+		#cardn[cardcount].set_custom_minimum_size(s)
+		#cardn[cardcount].minimum_size_changed()
+		#cardn[cardcount].rect_scale = Vector2(0.5,0.5)#s
+		#cardn[cardcount].apply_scale(s)
+		#cardn[cardcount].set_size(s)
+		#cardn[cardcount].scale = .5
+
+		#####print(cardn[cardcount].name)
+		
+		#LCPlayedStart(currentCardPlayed)
+		#cardn[cardcount].connect("mouse_entered", self, cardn[cardcount].entered_mouse())
+		cardn[cardcount].connect("mouse_entered", cardn[cardcount], "entered_mouse") 
+		cardn[cardcount].connect("mouse_exited", cardn[cardcount] ,"exited_mouse")
+
+		#for n in range(cardcount):
+		#var pos = get_node("Control").get_global_rect().get_size().x / (cardcount + 1)
+		#cardn[cardcount].position.x = pos
+		#cardn[cardcount].position.y = get_node("Control").get_global_rect().position.y
+		#get_node("HBoxContainer").add_child(cardc[cardcount])
+		#get_node("HBoxContainer/cardc" + String(cardcount)).add_child(cardn[cardcount])
+		if handcount < 20:
+			if(get_node("HBoxContainer") != null):
+				get_node("HBoxContainer").add_child(cardn[cardcount])
+			if(get_node("HBoxContainer/card" + String(cardcount)) != null):
+				get_node("HBoxContainer/card" + String(cardcount)).add_child(lighter)
+			handcount = handcount + 1
+			#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
+		elif handcount >= 20 && handcount2 < 20:
+			if(get_node("HBoxContainer2") != null):
+				get_node("HBoxContainer2").add_child(cardn[cardcount])
+			if(get_node("HBoxContainer2/card" + String(cardcount)) != null):
+				get_node("HBoxContainer2/card" + String(cardcount)).add_child(lighter)
+			handcount2 = handcount2 + 1
+		#get_node("HBoxContainer/card0").set_scale(s)
+		#print(cardn[cardcount].name)
+			#get_node("HBoxContainer").add_spacer(true)
+
+		#if (newGame == true):
+			#LCPlayedStart(currentCardPlayed)
+			#lastCardPlayed = currentCardPlayed
+		#LCPlayedSuitSet()
+			#newGame = false
+			
+		#if (countme == true):
+		#if (Opcc == false):
+		cardcount = cardcount + 1
+			#countme = false
+
+		
+			#string.substr(0,3).to_int()
+		# do something
+	if Input.is_action_just_released("mouseleft") && inside && firstrow:
+		print("played card " + get_node("HBoxContainer/" + selectedcard).cardname)
+		if playedcard != null:
+			lastcard = playedcard
+			#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
+		else:
+			lastcard = 78
+		playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
+		currentCardPlayed = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
+		get_node("Sprite2").texture = actual[playedcard]
+		###print(get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int())
+		get_node("HBoxContainer/" + selectedcard).queue_free()
+		handcount = handcount - 1
+		#print(currentCardPlayed)
+		print("there here")
+		LCPlayedSuitCheck()
+		Opponent()
+		#cardcount = cardcount + 1
+		
+	if Input.is_action_just_released("mouseleft") && inside && secondrow:
+		print("played card" + get_node("HBoxContainer2/" + selectedcard).cardname)
+		if playedcard != null:
+			lastcard = playedcard
+			#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
+		else:
+			lastcard = 78
+		playedcard = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
+		currentCardPlayed = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
+		get_node("Sprite2").texture = actual[playedcard]
+		###print(get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int())
+		get_node("HBoxContainer2/" + selectedcard).queue_free()
+		handcount2 = handcount2 -1
+		#print(currentCardPlayed)
+		print("there there")
+		LCPlayedSuitCheck()
+		Opponent()
+		#cardcount = cardcount + 1
+			#pass
+
+
+func next_turn():
+	current_player += 1
+	if current_player >= len(players):
+		current_player = 0
+
+func play_card(card):
+	if card.suit == current_suit or card.rank == 8:
+		players[current_player].play_card(card, discard_pile)
+		current_suit = card.suit
+		current_trump_number = -1
+		next_turn()
+	elif card.trump == true:
+		if card.trump_number > current_trump_number:
+			#current_suit = get_suit_from_player()
+			current_trump_number = card.trump_number
+		elif card.trump_number < current_trump_number:
+			#current_suit = get_random_suit()
+			current_trump_number = card.trump_number
+			
+			
+
+#func LCPlayedStart(currentCardPlayed):
+#	lastCardPlayed = currentCardPlayed
+	
+func LCPlayedSuitCheck():
+	print(currentCardPlayed)
+	print("thats that")
+	lastCardPlayedmem = lastCardPlayed
+	lastCardPlayed = currentCardPlayed
+	showcard = scards[cardcount].substr(0,2).to_int()
+	print(String(showcard) + " " + scards[cardcount])
+	if (showcard <= 21):
+		trumps = true
+		print("trumps")
+		wands = false
+		pentacles = false
+		cups = false
+		swords = false
+	if (showcard > 21 && showcard <= 35):
+		wands = true
+		print("wands")
+		trumps = false
+		pentacles = false
+		cups = false
+		swords = false
+	if (showcard > 35 && showcard <= 49):
+		pentacles = true
+		print("pentacles")
+		trumps = false
+		wands = false
+		cups = false
+		swords = false
+	if(showcard > 49 && showcard <= 63):
+		cups = true
+		print("cups")
+		trumps = false
+		wands = false
+		pentacles = false
+		swords = false
+	if(showcard > 63 && showcard <= 77):
+		swords = true
+		print("swords")
+		trumps = false
+		wands = false
+		pentacles = false
+		cups = false
+	#if(currentCardPlayed <= 21):
+	#	valid = true
+	#if(currentCardPlayed > lastCardPlayed):
+#		valid = true
+#		wildcard = true
+#	if(currentCardPlayed > 21 && currentCardPlayed <= 35):
+#		if(wands == true):
+#			valid = true
+#	if(currentCardPlayed > 35 && currentCardPlayed <= 49):
+#		if(pentacles == true):
+#			valid = true
+#	if(currentCardPlayed > 49 && currentCardPlayed <= 63):
+#		if(cups == true):
+#			valid = true
+#	if(currentCardPlayed > 63 && currentCardPlayed <= 77):
+#		if(swords == true):
+#			valid = true	 			
+		#lastcardPlayed)
+		
+		
+func RegularRankCheck():
+	pass
+	
+func TrumpRank():
+	pass
+	
+		
+func Opponent():
+	print("opponent:")
+	showcard = scards[cardcount].substr(0,2).to_int()
+	print(String(showcard) + " " + scards[cardcount])
+	get_node("Sprite3").texture = actual[lastcard]#showcard]
+	discardpile.append(lastcard)
+	get_node("Label3").text = scards[cardcount]
+	get_node("Label4").text = String(cardcount)
+	
+	#get card for opponent
+	showcard = scards[cardcount].substr(0,2).to_int()
+	print(String(showcard) + " " + scards[cardcount])
+	get_node("Sprite").texture = actual[showcard]
+	get_node("Label").text = scards[cardcount]
+	get_node("Label2").text = String(cardcount)
+	#cardcount  = cardcount + 1
+	#countme = false
+	#pass
+	cardn.append(TextureRect.new())
+	#if cycle == 1:
+	#	cardcount = cardcount + 78
+	cardn[cardcount].set_script(cardscript)
+	var lighter = Light2D.new()
+	lighter.hide()
+	lighter.set_name("lighter")
+	lighter.texture = lightpic
+	lighter.position.x = 40
+	lighter.position.y = 70
+	lighter.scale = s
+	#cardc.append(Control.new())
+	cardn[cardcount].set_name("card" + String(cardcount))
+	cardn[cardcount].cardname = scards[cardcount]
+	#cardc[cardcount].set_name("cardc" + String(cardcount))
+	#cardn[cardcount].texture = actual[showcard] #
+	cardn[cardcount].texture = get_resized_texture(actual[showcard],80,140)
+	#if(Opcc == true):
+	cardcount = cardcount + 1
+	#Opcc = false
+		#countme = false
+
+			
+			
+func get_resized_texture(t: Texture, width: int = 0, height: int = 0):
+		var image = t.get_data()
+		if width > 0 && height > 0:
+			image.resize(width, height)
+		var itex = ImageTexture.new()
+		itex.create_from_image(image)
+		return itex
+
+func entered_mouse():
+	self.get_node("lighter").show()  
+	
+func exited_mouse():
+	self.get_node("lighter").hide()
+	#get_node("HBoxContainer/card" + String(cardcount-1) + "/lighter").hide()
+
+
+
+func _on_HBoxContainer_mouse_entered():
+	firstrow = true
+#	pass # Replace with function body.
+
+
+func _on_HBoxContainer_mouse_exited():
+	firstrow = false
+#	pass # Replace with function body.
+
+
+func _on_HBoxContainer2_mouse_entered():
+	secondrow = true
+#	pass # Replace with function body.
+
+
+func _on_HBoxContainer2_mouse_exited():
+	secondrow = false
+#	pass # Replace with function body.
