@@ -459,61 +459,67 @@ func _process(delta):
 				showcard = scards[cardcount].substr(0,2).to_int()
 			else:
 				showcard = scards[cardcount].substr(0,1).toinst()
+			nocards = false
 		if cardcount == len(scards):
 			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% show deck back at 78")
 			nocards = true
 			showcard == 78
 		#showcard = scards[cardcount].substr(0,2).to_int()# replace with if else statement
 		###print(String(showcard) + " " + scards[cardcount])
-		get_node("Sprite").texture = actual[showcard]
-		get_node("Label").text = scards[cardcount]
-		get_node("Label2").text = String(cardcount)
-		
-
-		cardn.append(TextureRect.new())
-		if (cardn[cardcounttotal] != null):
-			cardn[cardcounttotal].set_script(cardscript)
-		###################################################################################################
-		var lighter = Light2D.new()
-		lighter.hide()
-		lighter.set_name("lighter")
-		lighter.texture = lightpic
-		lighter.position.x = 40
-		lighter.position.y = 70
-		lighter.scale = s
-
-		cardn[cardcounttotal].set_name("card" + String(cardcounttotal))
-		cardn[cardcounttotal].cardname = scards[cardcount]   #use resuedcards or discard pile
-		cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
-		
-		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
-		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
-		
-		if handcount < 20:
-			if(get_node("HBoxContainer") != null):
-				#get_node("HBoxContainer/card" + String(cardcount)).show()
-				get_node("HBoxContainer").add_child(cardn[cardcounttotal])
-			if(get_node("HBoxContainer/card" + String(cardcounttotal)) != null):
-				get_node("HBoxContainer/card" + String(cardcounttotal)).add_child(lighter)#get_node("HBoxContainer").add_child(cardn[cardcount])
-			#if(get_node("HBoxContainer/card" + String(cardcount)) != null):
-			#	get_node("HBoxContainer/card" + String(cardcount)).add_child(lighter)
-			handcount = handcount + 1
-			#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
-			notinhandcount2 = true
-		elif handcount >= 20 && handcount2 < 20:
-			if(get_node("HBoxContainer2") != null):
-				#get_node("HBoxContainer2/card" + String(cardcount)).show()
-				get_node("HBoxContainer2").add_child(cardn[cardcounttotal])
-			if(get_node("HBoxContainer2/card" + String(cardcounttotal)) != null):
-				get_node("HBoxContainer2/card" + String(cardcounttotal)).add_child(lighter)
-				#get_node("HBoxContainer2").add_child(cardn[cardcount])
-			#if(get_node("HBoxContainer2/card" + String(cardcount)) != null):
-			#	get_node("HBoxContainer2/card" + String(cardcount)).add_child(lighter)
-			handcount2 = handcount2 + 1
-			notinhandcount2 = false
-
+		if nocards:
+			print("No more cards in deck, wait until cards are played.")
+			#opponentPlayCard()
+			#nocards == false
 		else:
-			pass
+			get_node("Sprite").texture = actual[showcard]
+			get_node("Label").text = scards[cardcount]
+			get_node("Label2").text = String(cardcount)
+			
+	
+			cardn.append(TextureRect.new())
+			if (cardn[cardcounttotal] != null):
+				cardn[cardcounttotal].set_script(cardscript)
+			###################################################################################################
+			var lighter = Light2D.new()
+			lighter.hide()
+			lighter.set_name("lighter")
+			lighter.texture = lightpic
+			lighter.position.x = 40
+			lighter.position.y = 70
+			lighter.scale = s
+	
+			cardn[cardcounttotal].set_name("card" + String(cardcounttotal))
+			cardn[cardcounttotal].cardname = scards[cardcount]   #use resuedcards or discard pile
+			cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
+			
+			cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
+			cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
+			
+			if handcount < 20:
+				if(get_node("HBoxContainer") != null):
+					#get_node("HBoxContainer/card" + String(cardcount)).show()
+					get_node("HBoxContainer").add_child(cardn[cardcounttotal])
+				if(get_node("HBoxContainer/card" + String(cardcounttotal)) != null):
+					get_node("HBoxContainer/card" + String(cardcounttotal)).add_child(lighter)#get_node("HBoxContainer").add_child(cardn[cardcount])
+				#if(get_node("HBoxContainer/card" + String(cardcount)) != null):
+				#	get_node("HBoxContainer/card" + String(cardcount)).add_child(lighter)
+				handcount = handcount + 1
+				#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
+				notinhandcount2 = true
+			elif handcount >= 20 && handcount2 < 20:
+				if(get_node("HBoxContainer2") != null):
+					#get_node("HBoxContainer2/card" + String(cardcount)).show()
+					get_node("HBoxContainer2").add_child(cardn[cardcounttotal])
+				if(get_node("HBoxContainer2/card" + String(cardcounttotal)) != null):
+					get_node("HBoxContainer2/card" + String(cardcounttotal)).add_child(lighter)
+					#get_node("HBoxContainer2").add_child(cardn[cardcount])
+				#if(get_node("HBoxContainer2/card" + String(cardcount)) != null):
+				#	get_node("HBoxContainer2/card" + String(cardcount)).add_child(lighter)
+				handcount2 = handcount2 + 1
+				notinhandcount2 = false
+	
+			else:
+				pass
 
 		cardcount = cardcount + 1
 		cardcounttotal = cardcounttotal + 1
@@ -854,64 +860,74 @@ func Opponent():
 			showcard = scards[cardcount].substr(0,2).to_int()
 		else:
 			showcard = scards[cardcount].substr(0,1).toinst()
+		nocards = false
 	if cardcount == len(scards):
 			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+			nocards = true
+			showcard == 78
+	if nocards:
+		print("No more cards in deck, wait until cards are played. Opponent Turn.")
+		#opponentPlayCard()
+	else:
 	#showcard = scards[cardcount].substr(0,2).to_int()# replace with above code
-	print(String(showcard) + " - " + scards[cardcount])
+	#print(String(showcard) + " - " + scards[cardcount])
 	#lastcardname = scards[lastcard]#removinglasCardPlayed for showcard
 	
-	if (lastcard != null):
-		get_node("Sprite3").texture = actual[lastcard]#showcard]
-	####discardpile.append(lastcard)##########################################maybe this needs uncommented not sure
-#	get_node("Label3").text = lastcardname# scards[cardcount]#######################################################################################################
-	get_node("Label3").text = ("blah" + playedcardname)#scards[lastCardPlayed]# scards[cardcount]#######################################################################################################
-	get_node("Label4").text = String(cardcount)
+
 	
-	#get card for opponent
-	#showcard = scards[cardcount].substr(0,2).to_int()#already called
-	print(String(showcard) + " " + scards[cardcount])
-	##########get_node("Sprite").texture = actual[showcard]
-	get_node("Label").text = scards[cardcount]
-	get_node("Label2").text = String(cardcount)
-	#cardcount  = cardcount + 1
-	#countme = false
-	#pass
-	#showcard = scards[cardcount].substr(0,2).to_int()#aleady called
-	###print(String(showcard) + " " + scards[cardcount])
-	get_node("Sprite4").texture = actual[showcard]
-	get_node("Label5").text = scards[cardcount]
-	get_node("Label6").text = String(cardcounttotal)
-	var opponentmsg = "Your Oppenent Took a Card -" + scards[cardcount]
-	get_node("Label7").text = opponentmsg
-	get_node("Sprite4").texture = actual[showcard]
-	cardn.append(TextureRect.new())
-	if (cardn[cardcounttotal] != null):
-		cardn[cardcounttotal].set_script(cardscript)
-	###################################################################################################
-	var lighter = Light2D.new()
-	lighter.hide()
-	lighter.set_name("lighter")
-	lighter.texture = lightpic
-	lighter.position.x = 40
-	lighter.position.y = 70
-	lighter.scale = s
-
-	cardn[cardcounttotal].set_name("card" + String(cardcounttotal))#######################################################maybeuse cardcountcycle here
-	cardn[cardcounttotal].cardname = scards[cardcount]
-	cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
+	
+		if (lastcard != null):
+			get_node("Sprite3").texture = actual[lastcard]#showcard]
+		####discardpile.append(lastcard)##########################################maybe this needs uncommented not sure
+	#	get_node("Label3").text = lastcardname# scards[cardcount]#######################################################################################################
+		get_node("Label3").text = ("blah" + playedcardname)#scards[lastCardPlayed]# scards[cardcount]#######################################################################################################
+		get_node("Label4").text = String(cardcount)
 		
-
-	cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
-	cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
-
-	opponenthand.append(scards[cardcount])
-	print("----------------------opponent-hand----------------------")
-	print(opponenthand)
-	print("----------------------opponent-hand-end------------------")
-	cardcount = cardcount + 1
-	cardcounttotal = cardcounttotal + 1
-	get_node("Timer").start()
-	#timer callso opponentPlayCard()
+		#get card for opponent
+		#showcard = scards[cardcount].substr(0,2).to_int()#already called
+		print(String(showcard) + " " + scards[cardcount])
+		##########get_node("Sprite").texture = actual[showcard]
+		get_node("Label").text = scards[cardcount]
+		get_node("Label2").text = String(cardcount)
+		#cardcount  = cardcount + 1
+		#countme = false
+		#pass
+		#showcard = scards[cardcount].substr(0,2).to_int()#aleady called
+		###print(String(showcard) + " " + scards[cardcount])
+		get_node("Sprite4").texture = actual[showcard]
+		get_node("Label5").text = scards[cardcount]
+		get_node("Label6").text = String(cardcounttotal)
+		var opponentmsg = "Your Oppenent Took a Card -" + scards[cardcount]
+		get_node("Label7").text = opponentmsg
+		get_node("Sprite4").texture = actual[showcard]
+		cardn.append(TextureRect.new())
+		if (cardn[cardcounttotal] != null):
+			cardn[cardcounttotal].set_script(cardscript)
+		###################################################################################################
+		var lighter = Light2D.new()
+		lighter.hide()
+		lighter.set_name("lighter")
+		lighter.texture = lightpic
+		lighter.position.x = 40
+		lighter.position.y = 70
+		lighter.scale = s
+	
+		cardn[cardcounttotal].set_name("card" + String(cardcounttotal))#######################################################maybeuse cardcountcycle here
+		cardn[cardcounttotal].cardname = scards[cardcount]
+		cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
+			
+	
+		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
+		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
+	
+		opponenthand.append(scards[cardcount])
+		print("----------------------opponent-hand----------------------")
+		print(opponenthand)
+		print("----------------------opponent-hand-end------------------")
+		cardcount = cardcount + 1
+		cardcounttotal = cardcounttotal + 1
+		get_node("Timer").start()
+		#timer callso opponentPlayCard()
 	
 func opponentPlayCard():
 		var oppygone = 0
