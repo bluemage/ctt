@@ -64,7 +64,7 @@ var cardcountcycle = 0
 var cardcounttotal = 0
 var oppoenenthandcount = 0
 var oppindex = null
-#var lcn = null
+var nocards = false
 var player = 0
 var firstplaythroughdeck = true
 
@@ -319,7 +319,16 @@ func _process(delta):
 		##player = next_turn()
 		##print("player - is - " + String(player))
 		#add to player hand somehow
-		showcard = scards[cardcount].substr(0,2).to_int()
+		if cardcount < len(scards):
+			if len(scards[cardcount]) >= 2: #.length() >= 2:
+				showcard = scards[cardcount].substr(0,2).to_int()
+			else:
+				showcard = scards[cardcount].substr(0,1).toinst()
+		if cardcount == len(scards):
+			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+		
+
+		#showcard = scards[cardcount].substr(0,2).to_int()#alredy called.
 		###print(String(showcard) + " " + scards[cardcount])
 		get_node("Sprite").texture = actual[showcard]
 		get_node("Label").text = scards[cardcount]
@@ -441,14 +450,20 @@ func _process(delta):
 			#string.substr(0,3).to_int()
 		# do something
 	elif Input.is_action_just_released("mouseleft") && inside == false && cycle > 0:
-		##player = next_turn()
-		##print("player - is - early" + String(player))
-		#add to player hand somehow
-		#len(reusedcards)
-		#####print(String(len(reusedcards)) + "reusedcardlength")
-		#cardcountcycle = cardcount #- (77 * cycle)
-		#print("cardcountcycle = " + String(cardcountcycle))
-		showcard = scards[cardcount].substr(0,2).to_int()
+#		if(nocards):
+#			#DO nothing but display no cards
+#		else:
+
+		if cardcount < len(scards):
+			if len(scards[cardcount]) >= 2: #.length() >= 2:
+				showcard = scards[cardcount].substr(0,2).to_int()
+			else:
+				showcard = scards[cardcount].substr(0,1).toinst()
+		if cardcount == len(scards):
+			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% show deck back at 78")
+			nocards = true
+			showcard == 78
+		#showcard = scards[cardcount].substr(0,2).to_int()# replace with if else statement
 		###print(String(showcard) + " " + scards[cardcount])
 		get_node("Sprite").texture = actual[showcard]
 		get_node("Label").text = scards[cardcount]
@@ -456,9 +471,6 @@ func _process(delta):
 		
 
 		cardn.append(TextureRect.new())
-		#if cycle == 1:
-		#	cardcount = cardcount + 78
-		#if(cardn != null):
 		if (cardn[cardcounttotal] != null):
 			cardn[cardcounttotal].set_script(cardscript)
 		###################################################################################################
@@ -469,44 +481,14 @@ func _process(delta):
 		lighter.position.x = 40
 		lighter.position.y = 70
 		lighter.scale = s
-		#cardc.append(Control.new())
+
 		cardn[cardcounttotal].set_name("card" + String(cardcounttotal))
-		
-		#logic for scards reusedcards or discardpile go between scards to start then the others
-		
 		cardn[cardcounttotal].cardname = scards[cardcount]   #use resuedcards or discard pile
-		#cardc[cardcount].set_name("cardc" + String(cardcount))
-		#cardn[cardcount].texture = actual[showcard] #
 		cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
 		
-		
-		#cardn[cardcount].set_stretch_mode(3)
-		#cardn[cardcount].set_expand(true)
-		#cardn[cardcount].set_scale(s)
-		####print(cardn[cardcount].get_scale())
-		
-		#cardn[cardcount].set_custom_minimum_size(s)
-		#cardn[cardcount].minimum_size_changed()
-		#cardn[cardcount].rect_scale = Vector2(0.5,0.5)#s
-		#cardn[cardcount].apply_scale(s)
-		#cardn[cardcount].set_size(s)
-		#cardn[cardcount].scale = .5
-
-		#####print(cardn[cardcount].name)
-		
-		#LCPlayedStart(currentCardPlayed)
-		#cardn[cardcount].connect("mouse_entered", self, cardn[cardcount].entered_mouse())
 		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
 		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
-##########iit may be a bad idea to remove these but maybe not @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-		#for n in range(cardcount):
-		#var pos = get_node("Control").get_global_rect().get_size().x / (cardcount + 1)
-		#cardn[cardcount].position.x = pos
-		#cardn[cardcount].position.y = get_node("Control").get_global_rect().position.y
-		#get_node("HBoxContainer").add_child(cardc[cardcount])
-		#get_node("HBoxContainer/cardc" + String(cardcount)).add_child(cardn[cardcount])
+		
 		if handcount < 20:
 			if(get_node("HBoxContainer") != null):
 				#get_node("HBoxContainer/card" + String(cardcount)).show()
@@ -529,28 +511,14 @@ func _process(delta):
 			#	get_node("HBoxContainer2/card" + String(cardcount)).add_child(lighter)
 			handcount2 = handcount2 + 1
 			notinhandcount2 = false
-		#get_node("HBoxContainer/card0").set_scale(s)
-		#print(cardn[cardcount].name)
-			#get_node("HBoxContainer").add_spacer(true)
+
 		else:
 			pass
-		#if (newGame == true):
-			#LCPlayedStart(currentCardPlayed)
-			#lastCardPlayed = currentCardPlayed
-		#LCPlayedSuitSet()
-			#newGame = false
-			
-		#if (countme == true):
-		#if (Opcc == false):
+
 		cardcount = cardcount + 1
 		cardcounttotal = cardcounttotal + 1
-			#countme = false
 
-		
-			#string.substr(0,3).to_int()
-		# do something	
 
-##############?????????????????????????????????????????????not sure if needed
 		
 		
 		
@@ -567,9 +535,11 @@ func _process(delta):
 		#	#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
 		#else:
 		#	lastcard = 78
-		if(get_node("HBoxContainer/" + selectedcard).cardname == null):
-			pass
-		else:
+		if has_node("HBoxContainer/" + selectedcard):
+#		if(get_node("HBoxContainer/" + selectedcard).cardname == null):
+##		if(get_node("HBoxContainer/" + selectedcard) == null):	
+#			pass
+#		else:
 			#if ((get_node("HBoxContainer/") + selectedcard) != null):
 			print("played card " + get_node("HBoxContainer/" + selectedcard).cardname)
 			playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
@@ -612,9 +582,11 @@ func _process(delta):
 #			#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
 #		else:
 #			lastcard = 78	
-		if(get_node("HBoxContainer2/" + selectedcard).cardname == null):
-			pass
-		else:
+		if has_node("HBoxContainer2/" + selectedcard):
+#		(get_node("HBoxContainer2/" + selectedcard).cardname == null):
+##		if(get_node("HBoxContainer2/" + selectedcard) == null):	
+#			pass
+#		else:
 		#if(get_node("HBoxContainer2/" + selectedcard).cardname != null):
 		#if(get_node("HBoxContainer2/" + selectedcard).cardname):
 			#if ((get_node("HBoxContainer2/" + selectedcard).cardname) != null):
@@ -877,7 +849,14 @@ func TrumpRank():
 func Opponent():
 #forreference add in later				discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
 	print("opponent:")
-	showcard = scards[cardcount].substr(0,2).to_int()
+	if cardcount < len(scards):
+		if len(scards[cardcount]) >= 2: #.length() >= 2:
+			showcard = scards[cardcount].substr(0,2).to_int()
+		else:
+			showcard = scards[cardcount].substr(0,1).toinst()
+	if cardcount == len(scards):
+			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+	#showcard = scards[cardcount].substr(0,2).to_int()# replace with above code
 	print(String(showcard) + " - " + scards[cardcount])
 	#lastcardname = scards[lastcard]#removinglasCardPlayed for showcard
 	
@@ -889,7 +868,7 @@ func Opponent():
 	get_node("Label4").text = String(cardcount)
 	
 	#get card for opponent
-	showcard = scards[cardcount].substr(0,2).to_int()
+	#showcard = scards[cardcount].substr(0,2).to_int()#already called
 	print(String(showcard) + " " + scards[cardcount])
 	##########get_node("Sprite").texture = actual[showcard]
 	get_node("Label").text = scards[cardcount]
@@ -897,7 +876,7 @@ func Opponent():
 	#cardcount  = cardcount + 1
 	#countme = false
 	#pass
-	showcard = scards[cardcount].substr(0,2).to_int()
+	#showcard = scards[cardcount].substr(0,2).to_int()#aleady called
 	###print(String(showcard) + " " + scards[cardcount])
 	get_node("Sprite4").texture = actual[showcard]
 	get_node("Label5").text = scards[cardcount]
