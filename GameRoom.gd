@@ -66,6 +66,7 @@ var oppoenenthandcount = 0
 var oppindex = null
 #var lcn = null
 var player = 0
+var firstplaythroughdeck = true
 
 
 
@@ -280,14 +281,18 @@ func _process(delta):
 	#pass
 	
 
-	if (cardcount == 78):
-		#if(cardn == null):
-		#	cardn = Array()
-			#cardn.Clear()
-		#	cardn = Array()
-		#	cardn.Clear()
-		#	cardn[cardcount]
+	if (cardcount == 78 && firstplaythroughdeck):
+		firstplaythroughdeck = false
+		scards = discardpile.duplicate()
+		shuffle(scards)
 		cardcount = 0
+		discardpile.clear()
+	elif (cardcount == len(scards)-1):
+		scards = discardpile.duplicate()
+		shuffle(scards)
+		cardcount = 0
+		discardpile.clear()
+		#cardcount = 0
 		#setCards()
 		#scards = shuffle(cards)
 		##print(scards)
@@ -297,17 +302,17 @@ func _process(delta):
 		s.x = 0.5
 		s.y = 0.5
 		cycle = cycle + 1
-	#if (lastcycle < cycle):
-	#	scards = shuffle(cards)
-	#	print(scards)
-	#	s.x = 0.5
-	#	s.y = 0.5
-	#	lastcycle = cycle
-		#cardn = scards
-		if cycle > 0:
-			cardcountpluscycle = cardcount + (77 * cycle)
-			#messing with 77 or 78 for this
-		reusedcards = shuffle(discardpile)
+#	#if (lastcycle < cycle):
+#	#	scards = shuffle(cards)
+#	#	print(scards)
+#	#	s.x = 0.5
+#	#	s.y = 0.5
+#	#	lastcycle = cycle
+#		#cardn = scards
+#		if cycle > 0:
+#			cardcountpluscycle = cardcount + (77 * cycle)
+#			#messing with 77 or 78 for this
+#		reusedcards = shuffle(discardpile)
 			
 	
 	if Input.is_action_just_released("mouseleft") && inside == false && cycle == 0:
@@ -757,7 +762,10 @@ func LCPlayedSuitCheck() -> String:
 	
 	#showcard = scards[playedcard].substr(0,2).to_int()
 	#showcard = scards[currentCardPlayed].substr(0,2).to_int()
-	#showcard = currentCardPlayed
+	#showcard = currentCardPlay
+	if currentCardPlayed >= len(scards):
+		print("Error: currentCardPlayed is out of bounds")
+		return ""
 	print(String(currentCardPlayed) + " " + scards[currentCardPlayed] + "+++++")
 	if (currentCardPlayed <= 21):
 		trumps = true
