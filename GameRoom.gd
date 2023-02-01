@@ -67,7 +67,13 @@ var oppindex = null
 var nocards = false
 var player = 0
 var firstplaythroughdeck = true
-
+var top_card = null
+var top_rank = null
+var firstturn = true
+var player_turn = null
+var player1_cardcount = null
+var player_cardcount = null
+var player2_cardcount = null
 
 
 var deck = []
@@ -330,8 +336,12 @@ func _process(delta):
 				showcard = scards[cardcount].substr(0,1).toinst()
 		if cardcount == len(scards):
 			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+		player_turn = next_turn()
 		
-
+		if player_turn == 1:
+			player_cardcount = player1_cardcount
+		else:
+			player_cardcount = player2_cardcount
 		#showcard = scards[cardcount].substr(0,2).to_int()#alredy called.
 		###print(String(showcard) + " " + scards[cardcount])
 		get_node("Sprite").texture = actual[showcard]
@@ -403,6 +413,15 @@ func _process(delta):
 				get_node("HBoxContainer2/card" + String(cardcounttotal)).add_child(lighter)
 				notinhandcount2 = false
 			handcount2 = handcount2 + 1
+		#opponentPlayCard()
+#		if firstturn:
+#			firstturn = false
+#		else:
+		lsuit = LCPlayedSuitCheck()
+#			#if lsuit != null:
+		RegularRankCheck()				
+		Opponent()
+#			opponentPlayCard()
 
 
 #		if handcount < 20 && cycle > 0:
@@ -480,6 +499,7 @@ func _process(delta):
 			get_node("Sprite").texture = actual[showcard]
 			get_node("Label").text = scards[cardcount]
 			get_node("Label2").text = String(cardcount)
+			opponentPlayCard() # added this call
 			
 	
 			cardn.append(TextureRect.new())
@@ -526,9 +546,20 @@ func _process(delta):
 	
 			else:
 				pass
-
+#		if firstturn:
+#			firstturn = false
+#		else:
+#			lsuit = LCPlayedSuitCheck()
+#			#if lsuit != null:
+#			RegularRankCheck()				
+#			Opponent()
+	#		opponentPlayCard()
+	#	opponentPlayCard()
 		cardcount = cardcount + 1
 		cardcounttotal = cardcounttotal + 1
+
+
+
 
 
 		
@@ -755,65 +786,66 @@ func LCPlayedSuitCheck() -> String:
 	#showcard = scards[playedcard].substr(0,2).to_int()
 	#showcard = scards[currentCardPlayed].substr(0,2).to_int()
 	#showcard = currentCardPlay
-	if currentCardPlayed >= len(scards)-1:#################:
-		print("Error: currentCardPlayed is out of bounds")
-		return ""
-	print(String(currentCardPlayed) + " " + scards[currentCardPlayed] + "+++++")
-	if (currentCardPlayed <= 21):
-		trumps = true
-		print("trumps")
-		wands = false
-		pentacles = false
-		cups = false
-		swords = false
-		currentsuit = "trumps"
-	if (currentCardPlayed > 21 && currentCardPlayed <= 35):
-		wands = true
-		print("wands")
-		trumps = false
-		pentacles = false
-		cups = false
-		swords = false
-		currentsuit = "wands"
-	if (currentCardPlayed > 35 && currentCardPlayed <= 49):
-		pentacles = true
-		print("pentacles")
-		trumps = false
-		wands = false
-		cups = false
-		swords = false
-		currentsuit = "pentacles"
-	if(currentCardPlayed > 49 && currentCardPlayed <= 63):
-		cups = true
-		print("cups")
-		trumps = false
-		wands = false
-		pentacles = false
-		swords = false
-		currentsuit = "cups"
-	if(currentCardPlayed > 63 && currentCardPlayed <= 77):
-		swords = true
-		print("swords")
-		trumps = false
-		wands = false
-		pentacles = false
-		cups = false
-		currentsuit = "swords"
-	if(currentCardPlayed == 78):
-		currentsuit = "none this is the deckback"
-	print("currentsuit is ------> " + currentsuit)
-	if lastsuit == null:
-		lastsuit = currentsuit
-	if lastsuit != null:
-		if lastsuit == currentsuit:
-			samesuit = true
-			print("the suit is the same condition ::true::")
-		else:
-			samesuit = false
-			print("the suit is not the same ::false::")
-	lastsuit = currentsuit	
+	if currentCardPlayed:
+		if currentCardPlayed >= len(scards)-1:#################:
+			print("Error: currentCardPlayed is out of bounds")
+			return ""
+		print(String(currentCardPlayed) + " " + scards[currentCardPlayed] + "+++++")
+		if (currentCardPlayed <= 21):
+			trumps = true
+			print("trumps")
+			wands = false
+			pentacles = false
+			cups = false
+			swords = false
+			currentsuit = "trumps"
+		if (currentCardPlayed > 21 && currentCardPlayed <= 35):
+			wands = true
+			print("wands")
+			trumps = false
+			pentacles = false
+			cups = false
+			swords = false
+			currentsuit = "wands"
+		if (currentCardPlayed > 35 && currentCardPlayed <= 49):
+			pentacles = true
+			print("pentacles")
+			trumps = false
+			wands = false
+			cups = false
+			swords = false
+			currentsuit = "pentacles"
+		if(currentCardPlayed > 49 && currentCardPlayed <= 63):
+			cups = true
+			print("cups")
+			trumps = false
+			wands = false
+			pentacles = false
+			swords = false
+			currentsuit = "cups"
+		if(currentCardPlayed > 63 && currentCardPlayed <= 77):
+			swords = true
+			print("swords")
+			trumps = false
+			wands = false
+			pentacles = false
+			cups = false
+			currentsuit = "swords"
+		if(currentCardPlayed == 78):
+			currentsuit = "none this is the deckback"
+		print("currentsuit is ------> " + currentsuit)
+		if lastsuit == null:
+			lastsuit = currentsuit
+		if lastsuit != null:
+			if lastsuit == currentsuit:
+				samesuit = true
+				print("the suit is the same condition ::true::")
+			else:
+				samesuit = false
+				print("the suit is not the same ::false::")
+		lastsuit = currentsuit	
 	
-	#lastCardPlayed = currentCardPlayed
+		#lastCardPlayed = currentCardPlayed
 	return lastsuit
 	
 
@@ -870,6 +902,7 @@ func Opponent():
 	
 	#trying some elifs instead of just ifs
 #forreference add in later				discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
+
 	print("opponent:")
 	if cardcount < len(scards):
 		if len(scards[cardcount]) >= 2: #.length() >= 2:
@@ -891,8 +924,7 @@ func Opponent():
 	#showcard = scards[cardcount].substr(0,2).to_int()# replace with above code
 	#print(String(showcard) + " - " + scards[cardcount])
 	#lastcardname = scards[lastcard]#removinglasCardPlayed for showcard
-	
-
+	#playcard placeholder
 	
 	
 		if (lastcard != null):
@@ -935,9 +967,9 @@ func Opponent():
 		cardn[cardcounttotal].cardname = scards[cardcount]
 		cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
 			
-	
-		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
-		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
+#maybe not take these out not sure	
+#		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
+#		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
 	
 		opponenthand.append(scards[cardcount])
 		print("----------------------opponent-hand----------------------")
@@ -946,6 +978,7 @@ func Opponent():
 		cardcount = cardcount + 1
 		cardcounttotal = cardcounttotal + 1
 		get_node("Timer").start()
+		get_node("Sprite4/Light2D").show()
 		#timer callso opponentPlayCard()
 	
 func opponentPlayCard():
@@ -961,8 +994,10 @@ func opponentPlayCard():
 						
 		for ophand in opponenthand:
 			oppindex = ophand.substr(0,2).to_int()
-			
-			
+			#this is new section
+			if top_card:
+				top_card = discardpile[discardpile.size()]
+				top_rank = top_card.substr(0,2).to_int()			
 			#Check suit
 			if (oppindex > 21 && oppindex <= 35 && lastsuit == "wands"):
 				print("opponent play card for wands" + String(oppindex))
@@ -978,7 +1013,7 @@ func opponentPlayCard():
 					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
 						opponenthand.remove(index)#opponenthand[index]
 				break
-			if(oppindex > 35 && oppindex <= 49 && lastsuit == "pentacles"):
+			elif(oppindex > 35 && oppindex <= 49 && lastsuit == "pentacles"):
 				print("opponent play card for pentacles" + String(oppindex))
 				opponentsamesuit = true
 				get_node("Sprite2").texture = actual[oppindex]
@@ -992,7 +1027,7 @@ func opponentPlayCard():
 						opponenthand.remove(index)#opponenthand[index]
 				break
 				
-			if (oppindex > 49 && oppindex <= 63 && lastsuit == "cups"):
+			elif (oppindex > 49 && oppindex <= 63 && lastsuit == "cups"):
 				print("opponent play card for cups" + String(oppindex))
 				opponentsamesuit = true	
 				get_node("Sprite2").texture = actual[oppindex]
@@ -1007,7 +1042,7 @@ func opponentPlayCard():
 				break
 				#play the card
 				#pass
-			if (oppindex > 63 && oppindex <= 77 && lastsuit =="swords"):	
+			elif (oppindex > 63 && oppindex <= 77 && lastsuit =="swords"):	
 				print("opponent play card for swords" + String(oppindex))
 				opponentsamesuit = true
 				get_node("Sprite2").texture = actual[oppindex]
@@ -1061,6 +1096,28 @@ func opponentPlayCard():
 		for o in opponenthand:
 			print("new opponent hand is " + o)
 		player = next_turn()				
+		
+		# not sure if this is correct.
+#		top_card = discardpile[discardpile.size() - 1]
+#		top_rank = top_card.substr(0,2).to_int()
+#
+#		# check if any card in the opponent's hand has the same rank as the top card
+#		for card in opponenthand:
+#			var rank = card.substr(0,2).to_int()
+#			if rank == top_rank:
+#				opponenthand.erase(card)
+#				discardpile.append(card)
+#				return card
+#
+#		# if no card with the same rank, play the first card in the opponent's hand
+#		var played_card = opponenthand[0]
+#		opponenthand.erase(played_card)
+#		discardpile.append(played_card)
+#		return played_card
+
+		#lsuit = LCPlayedSuitCheck()
+			#if lsuit != null:
+		RegularRankCheck()	
 				
 		
 func opponentPlayCardOriginal():
@@ -1456,6 +1513,7 @@ func _on_HBoxContainer2_mouse_exited():
 
 func _on_Timer_timeout():
 	opponentPlayCard()
+	get_node("Sprite4/Light2D").hide()
 	#pass # Replace with function body.
 
 
