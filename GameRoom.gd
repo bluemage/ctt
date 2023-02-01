@@ -74,6 +74,7 @@ var player_turn = null
 var player1_cardcount = null
 var player_cardcount = null
 var player2_cardcount = null
+var cardcounttemp = null
 
 
 var deck = []
@@ -329,20 +330,21 @@ func _process(delta):
 		##player = next_turn()
 		##print("player - is - " + String(player))
 		#add to player hand somehow
-		if cardcount < len(scards):
-			if len(scards[cardcount]) >= 2: #.length() >= 2:
-				showcard = scards[cardcount].substr(0,2).to_int()
-			else:
-				showcard = scards[cardcount].substr(0,1).toinst()
-		if cardcount == len(scards):
-			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-		player_turn = next_turn()
+		if player_turn == 0:
+			if cardcount < len(scards):
+				if len(scards[cardcount]) >= 2: #.length() >= 2:
+					showcard = scards[cardcount].substr(0,2).to_int()
+				else:
+					showcard = scards[cardcount].substr(0,1).toinst()
+			if cardcount == len(scards):
+				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+			player_turn = next_turn()
 		
-		if player_turn == 1:
-			player_cardcount = player1_cardcount
-		else:
-			player_cardcount = player2_cardcount
-		#showcard = scards[cardcount].substr(0,2).to_int()#alredy called.
+#		if player_turn == 1:
+#			player_cardcount = player1_cardcount
+#		else:
+#			player_cardcount = player2_cardcount
+		showcard = scards[cardcount].substr(0,2).to_int()#alredy called.
 		###print(String(showcard) + " " + scards[cardcount])
 		get_node("Sprite").texture = actual[showcard]
 		get_node("Label").text = scards[cardcount]
@@ -476,18 +478,19 @@ func _process(delta):
 	elif Input.is_action_just_released("mouseleft") && inside == false && cycle > 0:
 #		if(nocards):
 #			#DO nothing but display no cards
-#		else:
-
-		if cardcount < len(scards):
-			if len(scards[cardcount]) >= 2: #.length() >= 2:
-				showcard = scards[cardcount].substr(0,2).to_int()
-			else:
-				showcard = scards[cardcount].substr(0,1).toinst()
-			nocards = false
-		if cardcount == len(scards):
-			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% show deck back at 78")
-			nocards = true
-			showcard == 78
+#		else:		
+		if player_turn == 0:
+			if cardcount < len(scards):
+				if len(scards[cardcount]) >= 2: #.length() >= 2:
+					showcard = scards[cardcount].substr(0,2).to_int()
+				else:
+					showcard = scards[cardcount].substr(0,1).toinst()
+				nocards = false
+			if cardcount == len(scards):
+				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% show deck back at 78")
+				nocards = true
+				showcard == 78
+			player_turn = next_turn()
 		#showcard = scards[cardcount].substr(0,2).to_int()# replace with if else statement
 		###print(String(showcard) + " " + scards[cardcount])
 		if nocards:
@@ -904,16 +907,36 @@ func Opponent():
 #forreference add in later				discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
 
 	print("opponent:")
-	if cardcount < len(scards):
-		if len(scards[cardcount]) >= 2: #.length() >= 2:
-			showcard = scards[cardcount].substr(0,2).to_int()
-		else:
-			showcard = scards[cardcount].substr(0,1).toinst()
-		nocards = false
-	elif cardcount == len(scards):
-			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-			nocards = true
-			showcard == 78
+#	if player_turn == 0:
+#			if cardcount < len(scards):
+#				if len(scards[cardcount]) >= 2: #.length() >= 2:
+#					showcard = scards[cardcount].substr(0,2).to_int()
+#				else:
+#					showcard = scards[cardcount].substr(0,1).toinst()
+#			if cardcount == len(scards):
+#				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+#			player_turn = next_turn()
+#
+##		if player_turn == 1:
+#
+#
+	
+	
+	
+	
+	if player_turn == 1:
+		if cardcount < len(scards):
+			if len(scards[cardcount]) >= 2: #.length() >= 2:
+				showcard = scards[cardcount].substr(0,2).to_int()
+			else:
+				showcard = scards[cardcount].substr(0,1).toinst()
+			nocards = false
+		elif cardcount == len(scards):
+				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+				nocards = true
+				showcard == 78
+			
+			
 	if nocards:
 		print("No more cards in deck, wait until cards are played. Opponent Turn.")
 	#	get_node("Timer").start()#maybe maybe maybe maybe 
@@ -925,7 +948,9 @@ func Opponent():
 	#print(String(showcard) + " - " + scards[cardcount])
 	#lastcardname = scards[lastcard]#removinglasCardPlayed for showcard
 	#playcard placeholder
-	
+		cardcounttemp = cardcount
+		cardcounttemp = cardcounttemp + 1
+		showcard = scards[cardcounttemp].substr(0,2).to_int()
 	
 		if (lastcard != null):
 			get_node("Sprite3").texture = actual[lastcard]#showcard]
@@ -946,11 +971,11 @@ func Opponent():
 		#showcard = scards[cardcount].substr(0,2).to_int()#aleady called
 		###print(String(showcard) + " " + scards[cardcount])
 		get_node("Sprite4").texture = actual[showcard]
-		get_node("Label5").text = scards[cardcount]
+		get_node("Label5").text = scards[cardcounttemp]
 		get_node("Label6").text = String(cardcounttotal)
 		var opponentmsg = "Your Oppenent Took a Card -" + scards[cardcount]
 		get_node("Label7").text = opponentmsg
-		get_node("Sprite4").texture = actual[showcard]
+		#get_node("Sprite4").texture = actual[showcard]
 		cardn.append(TextureRect.new())
 		if (cardn[cardcounttotal] != null):
 			cardn[cardcounttotal].set_script(cardscript)
@@ -1095,7 +1120,7 @@ func opponentPlayCard():
 #				break
 		for o in opponenthand:
 			print("new opponent hand is " + o)
-		player = next_turn()				
+		player_turn = next_turn()				
 		
 		# not sure if this is correct.
 #		top_card = discardpile[discardpile.size() - 1]
@@ -1325,7 +1350,7 @@ func opponentPlayCardOriginal():
 				break
 		for o in opponenthand:
 			print("new opponent hand is " + o)
-			player = next_turn()				
+			#player = next_turn()				
 				
 		
 		
