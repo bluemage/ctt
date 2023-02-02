@@ -339,6 +339,14 @@ func _process(delta):
 		#if cycle == 1:
 		#	cardcount = cardcount + 78
 		#if(cardn != null):
+			print(scards.size())
+			if cardcounttotal >= 0 and cardcounttotal < scards.size():
+#				card = scards[cardcounttotal]
+				pass
+			else:
+				cardcounttotal = cardcounttotal - 1
+#			cardcounttotal += 1
+			
 			if (cardn[cardcounttotal] != null):
 				cardn[cardcounttotal].set_script(cardscript)
 		###################################################################################################
@@ -720,14 +728,28 @@ func Opponent():
 	if cardcount < scards.size():
 		if scards[cardcount] != null:
 			var card = scards[cardcount]
-			var len_of_card = card.length()
-			if len_of_card >= 2:
+			if card.substr(0,2).to_int() > 0:
 				showcard = card.substr(0,2).to_int()
+				playedcard = showcard
+				playedcardname = card
 			else:
 				showcard = card.substr(0,1).to_int()
+				playedcard = showcard
+				playedcardname = card
 			nocards = false
-			playedcard = card.substr(0,2).to_int()
-			playedcardname = card
+
+
+#	if cardcount < scards.size():
+#		if scards[cardcount] != null:
+#			var card = scards[cardcount]
+#			var len_of_card = card.size()
+#			if len_of_card >= 2:
+#				showcard = card.substr(0,2).to_int()
+#			else:
+#				showcard = card.substr(0,1).to_int()
+#			nocards = false
+#			playedcard = card.substr(0,2).to_int()
+#			playedcardname = card
 
 #	if cardcount < scards.size():
 #		if scards[cardcount] != null:
