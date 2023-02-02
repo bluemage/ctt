@@ -1,3 +1,4 @@
+#import random
 #Can you please take the below code and make it work with the example code using the below code as the main section
 
 extends Node2D
@@ -36,7 +37,7 @@ var lastcycle = 0
 var lastCardPlayed = 78
 var lastCardPlayedmem = null
 var lastcard = null
-var currentCardPlayed = null
+var currentCardPlayed = ""
 var trumps = false
 var wands = false
 var pentacles = false
@@ -49,7 +50,7 @@ var newGame = true
 var history = null
 var Opcc = false
 var lastsuit = null
-var lsuit = null
+var lsuit = "none"
 var currentsuit = null
 var samesuit = false
 var notinhandcount2 = true
@@ -70,18 +71,20 @@ var firstplaythroughdeck = true
 var top_card = null
 var top_rank = null
 var firstturn = true
-var player_turn = null
+var player_turn = 0
 var player1_cardcount = null
 var player_cardcount = null
 var player2_cardcount = null
-var cardcounttemp = null
+var oppygone = 0
+var opponentplayedacard = false
+var rand_generate
 
 
 var deck = []
 var discard_pile = []
 var players = [1]
 var current_player = 0
-var current_suit = "hearts"
+var current_suit = ""
 var current_trump_number = -1
 
 # Called when the node enters the scene tree for the first time.
@@ -92,6 +95,11 @@ func _ready():
 	s.x = 0.5
 	s.y = 0.5
 	#pass # Replace with function body.
+	   # randomize seed
+	rand_generate = RandomNumberGenerator.new()
+	rand_generate.randomize()
+	# generate a random integer between 1 and 10
+
 	
 
 func setCards():
@@ -283,15 +291,7 @@ func shuffle(cardsy):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	
-	#func _init():
-	# Initialize deck, players, and discard pile
-	#pass
-	
-	
-	###possibly take out last chaange made not sure if it fixes freezing.
-	#if nocards:
-	#	return # return early, do not update displayed card
-		
+
 	if (cardcount == 78 && firstplaythroughdeck):
 		firstplaythroughdeck = false
 		scards = discardpile.duplicate()
@@ -303,33 +303,22 @@ func _process(delta):
 		shuffle(scards)
 		cardcount = 0
 		discardpile.clear()
-		#cardcount = 0
-		#setCards()
-		#scards = shuffle(cards)
-		##print(scards)
-		#cardn = scards
-		##print(cardn)
-		##print(":cardn")
+
 		s.x = 0.5
 		s.y = 0.5
 		cycle = cycle + 1
-#	#if (lastcycle < cycle):
-#	#	scards = shuffle(cards)
-#	#	print(scards)
-#	#	s.x = 0.5
-#	#	s.y = 0.5
-#	#	lastcycle = cycle
-#		#cardn = scards
-#		if cycle > 0:
-#			cardcountpluscycle = cardcount + (77 * cycle)
-#			#messing with 77 or 78 for this
-#		reusedcards = shuffle(discardpile)
+
 			
 	
 	if Input.is_action_just_released("mouseleft") && inside == false && cycle == 0:
 		##player = next_turn()
 		##print("player - is - " + String(player))
 		#add to player hand somehow
+		lastcard = playedcard
+		lastcardname = playedcardname
+		player_turn = next_turn()
+		
+		print("player_turn - is - " + String(player_turn))
 		if player_turn == 0:
 			if cardcount < len(scards):
 				if len(scards[cardcount]) >= 2: #.length() >= 2:
@@ -338,135 +327,66 @@ func _process(delta):
 					showcard = scards[cardcount].substr(0,1).toinst()
 			if cardcount == len(scards):
 				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-			player_turn = next_turn()
+
+			showcard = scards[cardcount].substr(0,2).to_int()#alredy called.
+			###print(String(showcard) + " " + scards[cardcount])
+			get_node("Sprite").texture = actual[showcard]
+			get_node("Label").text = scards[cardcount]
+			get_node("Label2").text = String(cardcount)
+			get_node("Timer").start()
+#			opponentPlayCard()
 		
-#		if player_turn == 1:
-#			player_cardcount = player1_cardcount
-#		else:
-#			player_cardcount = player2_cardcount
-		showcard = scards[cardcount].substr(0,2).to_int()#alredy called.
-		###print(String(showcard) + " " + scards[cardcount])
-		get_node("Sprite").texture = actual[showcard]
-		get_node("Label").text = scards[cardcount]
-		get_node("Label2").text = String(cardcount)
-		
-		cardn.append(TextureRect.new())
+			cardn.append(TextureRect.new())
 		#if cycle == 1:
 		#	cardcount = cardcount + 78
 		#if(cardn != null):
-		if (cardn[cardcounttotal] != null):
-			cardn[cardcounttotal].set_script(cardscript)
+			if (cardn[cardcounttotal] != null):
+				cardn[cardcounttotal].set_script(cardscript)
 		###################################################################################################
-		var lighter = Light2D.new()
-		lighter.hide()
-		lighter.set_name("lighter")
-		lighter.texture = lightpic
-		lighter.position.x = 40
-		lighter.position.y = 70
-		lighter.scale = s
-		#cardc.append(Control.new())
-		cardn[cardcounttotal].set_name("card" + String(cardcounttotal))#######################################################maybeuse cardcountcycle here
-		
-		#scards discard resued logic is needed
-		cardn[cardcounttotal].cardname = scards[cardcount]########?????????????????????????????????????not sure about cardcount
-		#cardc[cardcount].set_name("cardc" + String(cardcount))
-		#cardn[cardcount].texture = actual[showcard] #
-		cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
-		
-		
-		#cardn[cardcount].set_stretch_mode(3)
-		#cardn[cardcount].set_expand(true)
-		#cardn[cardcount].set_scale(s)
-		####print(cardn[cardcount].get_scale())
-		
-		#cardn[cardcount].set_custom_minimum_size(s)
-		#cardn[cardcount].minimum_size_changed()
-		#cardn[cardcount].rect_scale = Vector2(0.5,0.5)#s
-		#cardn[cardcount].apply_scale(s)
-		#cardn[cardcount].set_size(s)
-		#cardn[cardcount].scale = .5
-
-		#####print(cardn[cardcount].name)
-		
-		#LCPlayedStart(currentCardPlayed)
-		#cardn[cardcount].connect("mouse_entered", self, cardn[cardcount].entered_mouse())
-		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
-		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
-
-		#for n in range(cardcount):
-		#var pos = get_node("Control").get_global_rect().get_size().x / (cardcount + 1)
-		#cardn[cardcount].position.x = pos
-		#cardn[cardcount].position.y = get_node("Control").get_global_rect().position.y
-		#get_node("HBoxContainer").add_child(cardc[cardcount])
-		#get_node("HBoxContainer/cardc" + String(cardcount)).add_child(cardn[cardcount])
-
-		if handcount < 20:
-			if(get_node("HBoxContainer") != null):
-				get_node("HBoxContainer").add_child(cardn[cardcounttotal])
-			if(get_node("HBoxContainer/card" + String(cardcounttotal)) != null):
-				get_node("HBoxContainer/card" + String(cardcounttotal)).add_child(lighter)
-			notinhandcount2 = true
-			handcount = handcount + 1
-			#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
-		elif handcount >= 20 && handcount2 < 20: # && cycle == 0:
-			if(get_node("HBoxContainer2") != null):
-				get_node("HBoxContainer2").add_child(cardn[cardcounttotal])
-			if(get_node("HBoxContainer2/card" + String(cardcounttotal)) != null):
-				get_node("HBoxContainer2/card" + String(cardcounttotal)).add_child(lighter)
-				notinhandcount2 = false
-			handcount2 = handcount2 + 1
-		#opponentPlayCard()
+			var lighter = Light2D.new()
+			lighter.hide()
+			lighter.set_name("lighter")
+			lighter.texture = lightpic
+			lighter.position.x = 40
+			lighter.position.y = 70
+			lighter.scale = s
+			
+			cardn[cardcounttotal].set_name("card" + String(cardcounttotal))#######################################################maybeuse cardcountcycle here
+			cardn[cardcounttotal].cardname = scards[cardcount]########?????????????????????????????????????not sure about cardcount
+			cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
+			
+			cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
+			cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
+	
+			if handcount < 20:
+				if(get_node("HBoxContainer") != null):
+					get_node("HBoxContainer").add_child(cardn[cardcounttotal])
+				if(get_node("HBoxContainer/card" + String(cardcounttotal)) != null):
+					get_node("HBoxContainer/card" + String(cardcounttotal)).add_child(lighter)
+				notinhandcount2 = true
+				handcount = handcount + 1
+				#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
+			elif handcount >= 20 && handcount2 < 20: # && cycle == 0:
+				if(get_node("HBoxContainer2") != null):
+					get_node("HBoxContainer2").add_child(cardn[cardcounttotal])
+				if(get_node("HBoxContainer2/card" + String(cardcounttotal)) != null):
+					get_node("HBoxContainer2/card" + String(cardcounttotal)).add_child(lighter)
+					notinhandcount2 = false
+				handcount2 = handcount2 + 1
+			#opponentPlayCard()
 #		if firstturn:
-#			firstturn = false
-#		else:
-		lsuit = LCPlayedSuitCheck()
+#				firstturn = false
+#			else:
+			lsuit = LCPlayedSuitCheck()
+			######################################################################################################################################
+			if lsuit:
+				get_node("Label9").text = lsuit	
 #			#if lsuit != null:
-		RegularRankCheck()				
+		RegularRankCheck()		
+		#if player_turn == 1:		
 		Opponent()
 #			opponentPlayCard()
 
-
-#		if handcount < 20 && cycle > 0:
-#			if(get_node("HBoxContainer") != null):
-#				get_node("HBoxContainer").add_child(cardn[cardcount])
-#			if(get_node("HBoxContainer/card" + String(cardcount)) != null):
-#				get_node("HBoxContainer/card" + String(cardcount)).add_child(lighter)
-#			handcount = handcount + 1
-#			#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
-#		elif handcount >= 20 && handcount2 < 20 && cycle > 0:
-#			if(get_node("HBoxContainer2") != null):
-#				get_node("HBoxContainer2").add_child(cardn[cardcount])
-#			if(get_node("HBoxContainer2/card" + String(cardcount)) != null):
-#				get_node("HBoxContainer2/card" + String(cardcount)).add_child(lighter)
-#			handcount2 = handcount2 + 1			
-#################**********************************************************************************************			
-#			
-#		if handcount < 20:
-#			if(get_node("HBoxContainer") != null):
-#				get_node("HBoxContainer").add_child(cardn[cardcount])
-#			if(get_node("HBoxContainer/card" + String(cardcount) + String(cycle)) != null):
-#				get_node("HBoxContainer/card" + String(cardcount) + String(cycle)).add_child(lighter)
-#			handcount = handcount + 1
-			#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
-#		elif handcount >= 20 && handcount2 < 20:
-#			if(get_node("HBoxContainer2") != null):
-#				get_node("HBoxContainer2").add_child(cardn[cardcount])
-#			if(get_node("HBoxContainer2/card" + String(cardcount) + String(cycle)) != null):
-#				get_node("HBoxContainer2/card" + String(cardcount) + String(cycle)).add_child(lighter)
-				
-							
-		#get_node("HBoxContainer/card0").set_scale(s)
-		#print(cardn[cardcount].name)
-			#get_node("HBoxContainer").add_spacer(true)
-
-		#if (newGame == true):
-			#LCPlayedStart(currentCardPlayed)
-			#lastCardPlayed = currentCardPlayed
-		#LCPlayedSuitSet()
-			#newGame = false
-			
-		#if (countme == true):
-		#if (Opcc == false):
 		cardcount = cardcount + 1
 		cardcounttotal = cardcounttotal + 1
 			#countme = false
@@ -475,10 +395,9 @@ func _process(delta):
 			#string.substr(0,3).to_int()
 		# do something
 		
-	elif Input.is_action_just_released("mouseleft") && inside == false && cycle > 0:
-#		if(nocards):
-#			#DO nothing but display no cards
-#		else:		
+	elif Input.is_action_just_released("mouseleft") && inside == false && cycle > 0:  #this is just waiting to break
+		lastcard = playedcard
+		lastcardname = playedcardname
 		if player_turn == 0:
 			if cardcount < len(scards):
 				if len(scards[cardcount]) >= 2: #.length() >= 2:
@@ -490,18 +409,17 @@ func _process(delta):
 				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% show deck back at 78")
 				nocards = true
 				showcard == 78
-			player_turn = next_turn()
+			#player_turn = next_turn()
 		#showcard = scards[cardcount].substr(0,2).to_int()# replace with if else statement
 		###print(String(showcard) + " " + scards[cardcount])
 		if nocards:
 			print("No more cards in deck, wait until cards are played.")
-			#opponentPlayCard()
-			#nocards == false
 			return#maybe return statement here
 		else:
 			get_node("Sprite").texture = actual[showcard]
 			get_node("Label").text = scards[cardcount]
 			get_node("Label2").text = String(cardcount)
+			lsuit = lastsuit
 			opponentPlayCard() # added this call
 			
 	
@@ -526,14 +444,10 @@ func _process(delta):
 			
 			if handcount < 20:
 				if(get_node("HBoxContainer") != null):
-					#get_node("HBoxContainer/card" + String(cardcount)).show()
 					get_node("HBoxContainer").add_child(cardn[cardcounttotal])
 				if(get_node("HBoxContainer/card" + String(cardcounttotal)) != null):
 					get_node("HBoxContainer/card" + String(cardcounttotal)).add_child(lighter)#get_node("HBoxContainer").add_child(cardn[cardcount])
-				#if(get_node("HBoxContainer/card" + String(cardcount)) != null):
-				#	get_node("HBoxContainer/card" + String(cardcount)).add_child(lighter)
 				handcount = handcount + 1
-				#get_node("HBoxContainer/card" + String(cardcount)).connect("mouse_entered", self, get_node("HBoxContainer/card" + String(cardcount)).entered_mouse())
 				notinhandcount2 = true
 			elif handcount >= 20 && handcount2 < 20:
 				if(get_node("HBoxContainer2") != null):
@@ -541,68 +455,33 @@ func _process(delta):
 					get_node("HBoxContainer2").add_child(cardn[cardcounttotal])
 				if(get_node("HBoxContainer2/card" + String(cardcounttotal)) != null):
 					get_node("HBoxContainer2/card" + String(cardcounttotal)).add_child(lighter)
-					#get_node("HBoxContainer2").add_child(cardn[cardcount])
-				#if(get_node("HBoxContainer2/card" + String(cardcount)) != null):
-				#	get_node("HBoxContainer2/card" + String(cardcount)).add_child(lighter)
+
 				handcount2 = handcount2 + 1
 				notinhandcount2 = false
 	
 			else:
 				pass
-#		if firstturn:
-#			firstturn = false
-#		else:
-#			lsuit = LCPlayedSuitCheck()
-#			#if lsuit != null:
-#			RegularRankCheck()				
-#			Opponent()
-	#		opponentPlayCard()
-	#	opponentPlayCard()
+		
+
 		cardcount = cardcount + 1
 		cardcounttotal = cardcounttotal + 1
-
-
-
-
-
-		
-		
-		
-		
 				
 	if Input.is_action_just_released("mouseleft") && inside && firstrow:
-		##player = next_turn()
-		##print("player - is - " + String(player))
-		#discardpile.append(selectedcard.cardname)
 		lastcard = playedcard
 		lastcardname = playedcardname
-		#if playedcard != null:
-		#	lastcard = playedcard
-		#	#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
-		#else:
-		#	lastcard = 78
+
 		if has_node("HBoxContainer/" + selectedcard):
-#		if(get_node("HBoxContainer/" + selectedcard).cardname == null):
-##		if(get_node("HBoxContainer/" + selectedcard) == null):	
-#			pass
-#		else:
-			#if ((get_node("HBoxContainer/") + selectedcard) != null):
 			print("played card " + get_node("HBoxContainer/" + selectedcard).cardname)
 			playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
 			#playedcardname = 
 			playedcardname = get_node("HBoxContainer/" + selectedcard).cardname
+			currentCardPlayed = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
 			if currentCardPlayed != null:
 				lastCardPlayed = currentCardPlayed
-			currentCardPlayed = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
+
 			currentcardplayedname = get_node("HBoxContainer/" + selectedcard).cardname
 			get_node("Sprite2").texture = actual[playedcard]
-			###print(get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int())
 			discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
-			#discardpile2.append(get_node("HBoxContainer/" + selectedcard))
-			####playerhand.append(cardn[cardcounttotal])
-
-
-
 			playerhanddiscard.append((get_node("HBoxContainer/" + selectedcard).cardname))
 
 			print("************** player hand discard ****************")
@@ -617,6 +496,8 @@ func _process(delta):
 			#print(currentCardPlayed)
 			#print("there here")#printprintprintprint
 			lsuit = LCPlayedSuitCheck()
+			if lsuit:
+				get_node("Label9").text = lsuit	
 			RegularRankCheck()
 			Opponent()
 
@@ -626,29 +507,18 @@ func _process(delta):
 
 		
 	if Input.is_action_just_released("mouseleft") && inside && secondrow:
-		##player = next_turn()
-		##print("player - is - " + String(player))
 		lastcard = playedcard
 		lastcardname = playedcardname
-#		if playedcard == null:
-#			lastcard = playedcard
-#			#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
-#		else:
-#			lastcard = 78	
+
 		if has_node("HBoxContainer2/" + selectedcard):
-#		(get_node("HBoxContainer2/" + selectedcard).cardname == null):
-##		if(get_node("HBoxContainer2/" + selectedcard) == null):	
-#			pass
-#		else:
-		#if(get_node("HBoxContainer2/" + selectedcard).cardname != null):
-		#if(get_node("HBoxContainer2/" + selectedcard).cardname):
-			#if ((get_node("HBoxContainer2/" + selectedcard).cardname) != null):
 			print("played card" + get_node("HBoxContainer2/" + selectedcard).cardname)
 			playedcard = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
 			playedcardname = get_node("HBoxContainer2/" + selectedcard).cardname
+			
+			currentCardPlayed = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
 			if currentCardPlayed != null:
 				lastCardPlayed = currentCardPlayed
-			currentCardPlayed = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
+
 			currentcardplayedname = get_node("HBoxContainer2/" + selectedcard).cardname
 			get_node("Sprite2").texture = actual[playedcard]
 			###print(get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int())
@@ -663,9 +533,11 @@ func _process(delta):
 			get_node("HBoxContainer2/" + selectedcard).queue_free()
 			handcount2 = handcount2 - 1
 			#print(currentCardPlayed)
-			print("there there")
+			print("there there")	
 			lsuit = LCPlayedSuitCheck()
-			#if lsuit != null:
+			if lsuit:
+				get_node("Label9").text = lsuit
+				#if lsuit != null:
 			RegularRankCheck()				
 			Opponent()
 
@@ -673,81 +545,7 @@ func _process(delta):
 		#cardcount = cardcount + 1
 			#pass
 		#lastCardPlayed = currentCardPlayed
-#######################################################################################################################################################
 
-###doubled the code to use with cyle variable
-
-#####################################################################################################################################################	
-#		
-#	if Input.is_action_just_released("mouseleft") && inside && firstrow:
-#		#discardpile.append(selectedcard.cardname)
-#		lastcard = playedcard
-#		#if playedcard != null:
-#		#	lastcard = playedcard
-#		#	#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
-#		#else:
-#		#	lastcard = 78
-#		print("played card " + get_node("HBoxContainer/" + selectedcard).cardname)
-#		playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
-#		playedcardname = get_node("HBoxContainer/" + selectedcard).cardname
-#		if currentCardPlayed != null:
-#			lastCardPlayed = currentCardPlayed
-#		currentCardPlayed = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
-#		currentcardplayedname = get_node("HBoxContainer/" + selectedcard).cardname
-#		get_node("Sprite2").texture = actual[playedcard]
-#		###print(get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int())
-#		discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
-#		discardpile2.append(get_node("HBoxContainer/" + selectedcard))
-#		playerhand.append((get_node("HBoxContainer/" + selectedcard)))
-#		reusedcards.append(get_node("HBoxContainer/" + selectedcard))
-#		get_node("HBoxContainer/" + selectedcard).queue_free()
-#		handcount = handcount - 1
-#		#print(currentCardPlayed)
-#		print("there here")
-#		lsuit = LCPlayedSuitCheck()
-#		Opponent()
-#		#cardcount = cardcount + 1
-#		#lastCardPlayed = currentCardPlayed
-#
-#		
-#	if Input.is_action_just_released("mouseleft") && inside && secondrow:
-#		lastcard = playedcard
-##		if playedcard == null:
-##			lastcard = playedcard
-##			#playedcard = get_node("HBoxContainer/" + selectedcard).cardname.substr(0,2).to_int()
-##		else:
-##			lastcard = 78
-#		print("played card" + get_node("HBoxContainer2/" + selectedcard).cardname)
-##		playedcard = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
-#		playedcardname = get_node("HBoxContainer2/" + selectedcard).cardname
-#		if currentCardPlayed != null:
-#			lastCardPlayed = currentCardPlayed
-#		currentCardPlayed = get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
-#		currentcardplayedname = get_node("HBoxContainer2/" + selectedcard).cardname
-#		get_node("Sprite2").texture = actual[playedcard]
-#		###print(get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int())
-#		discardpile.append(get_node("HBoxContainer2/" + selectedcard).cardname)
-#		discardpile2.append(get_node("HBoxContainer2/" + selectedcard))
-#		playerhand.append((get_node("HBoxContainer2/" + selectedcard)))
-#		reusedcards.append(get_node("HBoxContainer2/" + selectedcard))
-#		get_node("HBoxContainer2/" + selectedcard).queue_free()
-#		handcount2 = handcount2 -1
-#		#print(currentCardPlayed)
-#		print("there there")
-#		lsuit = LCPlayedSuitCheck()
-#		#if lsuit != null:
-#			
-#		Opponent()
-#		#cardcount = cardcount + 1
-#			#pass
-#		#lastCardPlayed = currentCardPlayed
-
-
-#func next_turn():
-#	current_player += 1
-#	if current_player >= len(players):
-#		current_player = 0
-#	return current_player
 	
 func next_turn() -> int:
 	if(current_player == 1):
@@ -756,25 +554,7 @@ func next_turn() -> int:
 	else:
 		current_player = 1
 		return current_player
-	
 
-	
-#	return current_player
-func play_card(card):
-	if card.suit == current_suit or card.rank == 8:
-		players[current_player].play_card(card, discard_pile)
-		current_suit = card.suit
-		current_trump_number = -1
-		#next_turn()
-	elif card.trump == true:
-		if card.trump_number > current_trump_number:
-			#current_suit = get_suit_from_player()
-			current_trump_number = card.trump_number
-		elif card.trump_number < current_trump_number:
-			#current_suit = get_random_suit()
-			current_trump_number = card.trump_number
-			
-			
 
 #func LCPlayedStart(currentCardPlayed):
 #	lastCardPlayed = currentCardPlayed
@@ -802,6 +582,7 @@ func LCPlayedSuitCheck() -> String:
 			cups = false
 			swords = false
 			currentsuit = "trumps"
+			get_node("Label9").text = "trumps"
 		if (currentCardPlayed > 21 && currentCardPlayed <= 35):
 			wands = true
 			print("wands")
@@ -810,6 +591,7 @@ func LCPlayedSuitCheck() -> String:
 			cups = false
 			swords = false
 			currentsuit = "wands"
+			get_node("Label9").text = "wands"
 		if (currentCardPlayed > 35 && currentCardPlayed <= 49):
 			pentacles = true
 			print("pentacles")
@@ -818,6 +600,7 @@ func LCPlayedSuitCheck() -> String:
 			cups = false
 			swords = false
 			currentsuit = "pentacles"
+			get_node("Label9").text = "pentacles"
 		if(currentCardPlayed > 49 && currentCardPlayed <= 63):
 			cups = true
 			print("cups")
@@ -826,6 +609,7 @@ func LCPlayedSuitCheck() -> String:
 			pentacles = false
 			swords = false
 			currentsuit = "cups"
+			get_node("Label9").text = "cups"
 		if(currentCardPlayed > 63 && currentCardPlayed <= 77):
 			swords = true
 			print("swords")
@@ -834,7 +618,9 @@ func LCPlayedSuitCheck() -> String:
 			pentacles = false
 			cups = false
 			currentsuit = "swords"
+			get_node("Label9").text = "swords"
 		if(currentCardPlayed == 78):
+			get_node("Label9").text = "deckback"
 			currentsuit = "none this is the deckback"
 		print("currentsuit is ------> " + currentsuit)
 		if lastsuit == null:
@@ -846,7 +632,7 @@ func LCPlayedSuitCheck() -> String:
 			else:
 				samesuit = false
 				print("the suit is not the same ::false::")
-		lastsuit = currentsuit	
+			lastsuit = currentsuit	
 	
 		#lastCardPlayed = currentCardPlayed
 	return lastsuit
@@ -880,8 +666,10 @@ func RegularRankCheck():
 				#do trump rank here
 				if (currentCardPlayed > lastcard):
 					pickSuit()
-					currentsuit = "trumps - ranking just occured - current card greater than last card"
+					#currentsuit = "trumps"
+					print(" - ranking just occured - current card greater than last card")
 					print(currentsuit)
+				get_node("Label9").text = lsuit #current_suit
 			if(currentCardPlayed > 21 && lastcard > 21):
 				if (currentcardplayedname.substr(3,4) == lastcardname.substr(3,4)):
 					samerank = true
@@ -902,41 +690,31 @@ func TrumpRank():
 	
 		
 func Opponent():
-	
-	#trying some elifs instead of just ifs
-#forreference add in later				discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
+#
+#	playedcard = scards[cardcount].substr(0,2).to_int()
+#	#get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
+#	playedcardname = scards[cardcount]
+#	print("testbed area areaarea areaarea areaarea areaarea areaarea areaarea areaarea areaarea area" + scards[cardcount])
+#	#get_node("HBoxContainer2/" + selectedcard).cardname
+#	#trying some elifs instead of just ifs
+##forreference add in later				discardpile.append(get_node("HBoxContainer/" + selectedcard).cardname)
 
 	print("opponent:")
-#	if player_turn == 0:
-#			if cardcount < len(scards):
-#				if len(scards[cardcount]) >= 2: #.length() >= 2:
-#					showcard = scards[cardcount].substr(0,2).to_int()
-#				else:
-#					showcard = scards[cardcount].substr(0,1).toinst()
-#			if cardcount == len(scards):
-#				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-#			player_turn = next_turn()
-#
-##		if player_turn == 1:
-#
-#
-	
-	
-	
-	
-	if player_turn == 1:
-		if cardcount < len(scards):
-			if len(scards[cardcount]) >= 2: #.length() >= 2:
-				showcard = scards[cardcount].substr(0,2).to_int()
-			else:
-				showcard = scards[cardcount].substr(0,1).toinst()
-			nocards = false
-		elif cardcount == len(scards):
-				print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-				nocards = true
-				showcard == 78
-			
-			
+	if cardcount < len(scards):
+		if len(scards[cardcount]) >= 2: #.length() >= 2:
+			showcard = scards[cardcount].substr(0,2).to_int()
+		else:
+			showcard = scards[cardcount].substr(0,1).toint()
+		nocards = false
+		playedcard = scards[cardcount].substr(0,2).to_int()
+	#get_node("HBoxContainer2/" + selectedcard).cardname.substr(0,2).to_int()
+		playedcardname = scards[cardcount]
+		print("testbed area areaarea areaarea areaarea areaarea areaarea areaarea areaarea areaarea area" + scards[cardcount])
+		
+	elif cardcount == len(scards):
+			print("No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%No cards currently available%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+			nocards = true
+			showcard == 78#maybe not showcard 78 here
 	if nocards:
 		print("No more cards in deck, wait until cards are played. Opponent Turn.")
 	#	get_node("Timer").start()#maybe maybe maybe maybe 
@@ -948,88 +726,198 @@ func Opponent():
 	#print(String(showcard) + " - " + scards[cardcount])
 	#lastcardname = scards[lastcard]#removinglasCardPlayed for showcard
 	#playcard placeholder
-		cardcounttemp = cardcount
-		cardcounttemp = cardcounttemp + 1
-		showcard = scards[cardcounttemp].substr(0,2).to_int()
-	
-		if (lastcard != null):
-			get_node("Sprite3").texture = actual[lastcard]#showcard]
-		####discardpile.append(lastcard)##########################################maybe this needs uncommented not sure
-	#	get_node("Label3").text = lastcardname# scards[cardcount]#######################################################################################################
-		get_node("Label3").text = ("blah" + playedcardname)#scards[lastCardPlayed]# scards[cardcount]#######################################################################################################
-		get_node("Label4").text = String(cardcount)
-		
-		#get card for opponent
-		#showcard = scards[cardcount].substr(0,2).to_int()#already called
-		print(String(showcard) + " " + scards[cardcount])
-		##########get_node("Sprite").texture = actual[showcard]
-		get_node("Label").text = scards[cardcount]
-		get_node("Label2").text = String(cardcount)
-		#cardcount  = cardcount + 1
+		if(player_turn == 1):
+			if (lastcard != null):
+				get_node("Sprite3").texture = actual[lastcard]#showcard]
+			####discardpile.append(lastcard)##########################################maybe this needs uncommented not sure
+		#	get_node("Label3").text = lastcardname# scards[cardcount]#######################################################################################################
+			get_node("Label3").text = ("blah" + playedcardname)#scards[lastCardPlayed]# scards[cardcount]#######################################################################################################
+			get_node("Label4").text = String(cardcount)
+			
+			#get card for opponent
+			#showcard = scards[cardcount].substr(0,2).to_int()#already called
+			print(String(showcard) + " " + scards[cardcount])
+			##########get_node("Sprite").texture = actual[showcard]
+			get_node("Label").text = scards[cardcount]
+			get_node("Label2").text = String(cardcount)
+			#cardcount  = cardcount + 1
 		#countme = false
 		#pass
 		#showcard = scards[cardcount].substr(0,2).to_int()#aleady called
 		###print(String(showcard) + " " + scards[cardcount])
-		get_node("Sprite4").texture = actual[showcard]
-		get_node("Label5").text = scards[cardcounttemp]
-		get_node("Label6").text = String(cardcounttotal)
-		var opponentmsg = "Your Oppenent Took a Card -" + scards[cardcount]
-		get_node("Label7").text = opponentmsg
+			get_node("Sprite4").texture = actual[showcard]
+			get_node("Label5").text = scards[cardcount]
+			get_node("Label6").text = String(cardcounttotal)
+			var opponentmsg = "Your Oppenent Took a Card -" + scards[cardcount]
+			get_node("Label7").text = opponentmsg
 		#get_node("Sprite4").texture = actual[showcard]
-		cardn.append(TextureRect.new())
-		if (cardn[cardcounttotal] != null):
-			cardn[cardcounttotal].set_script(cardscript)
+			cardn.append(TextureRect.new())
+			if (cardn[cardcounttotal] != null):
+				cardn[cardcounttotal].set_script(cardscript)
 		###################################################################################################
-		var lighter = Light2D.new()
-		lighter.hide()
-		lighter.set_name("lighter")
-		lighter.texture = lightpic
-		lighter.position.x = 40
-		lighter.position.y = 70
-		lighter.scale = s
+			var lighter = Light2D.new()
+			lighter.hide()
+			lighter.set_name("lighter")
+			lighter.texture = lightpic
+			lighter.position.x = 40
+			lighter.position.y = 70
+			lighter.scale = s
 	
-		cardn[cardcounttotal].set_name("card" + String(cardcounttotal))#######################################################maybeuse cardcountcycle here
-		cardn[cardcounttotal].cardname = scards[cardcount]
-		cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
+			cardn[cardcounttotal].set_name("card" + String(cardcounttotal))#######################################################maybeuse cardcountcycle here
+			cardn[cardcounttotal].cardname = scards[cardcount]
+			
+			
+			cardn[cardcounttotal].add_child(lighter)
+			cardn[cardcounttotal].add_child(Sprite.new())
+			cardn[cardcounttotal].get_child(0).set_texture(actual[showcard])
+			cardn[cardcounttotal].get_child(0).set_scale(Vector2(0.16, 0.16))
+			cardn[cardcounttotal].get_child(0).set_position(Vector2(0,0))
+			
+			
+			
+			
+			
+			cardn[cardcounttotal].texture = get_resized_texture(actual[showcard],80,140)
 			
 #maybe not take these out not sure	
 #		cardn[cardcounttotal].connect("mouse_entered", cardn[cardcounttotal], "entered_mouse") 
 #		cardn[cardcounttotal].connect("mouse_exited", cardn[cardcounttotal] ,"exited_mouse")
 	
-		opponenthand.append(scards[cardcount])
-		print("----------------------opponent-hand----------------------")
-		print(opponenthand)
-		print("----------------------opponent-hand-end------------------")
-		cardcount = cardcount + 1
-		cardcounttotal = cardcounttotal + 1
-		get_node("Timer").start()
-		get_node("Sprite4/Light2D").show()
+			opponenthand.append(scards[cardcount])
+			print("----------------------opponent-hand----------------------")
+			print(opponenthand)
+			print("----------------------opponent-hand-end------------------")
+#			cardcount = cardcount + 1
+#			cardcounttotal = cardcounttotal + 1
+		#if(player_turn == 1):
+			get_node("Timer").start()
+			get_node("Sprite4/Light2D").show()
 		#timer callso opponentPlayCard()
 	
 func opponentPlayCard():
-		var oppygone = 0
-		print("the opphand   ")
+	oppygone = 0#maybe not needed
+	print("the opphand   ")
 
-		for o in opponenthand:
-			print("opponent hand is " + o)
+	#for o in opponenthand:
+	#	print("opponent hand is " + o)
+	
+	print("*******************************************look here for index, opponenthand[index]********************************")	
+	for index in range(len(opponenthand)):
+		print(index, opponenthand[index])
+	if discardpile:
+		top_card = discardpile[len(discardpile)-1]
+		top_rank = top_card.substr(0,2).to_int()			
+		lastsuit = LCPlayedSuitCheck()
+	for ophand in opponenthand:
+		oppindex = ophand.substr(0,2).to_int()
+#		lastsuit = "none"
+#		#this is new section
+#		if top_card:
+#			if discardpile:
+#				top_card = discardpile[discardpile.size() - 1]
+#				top_rank = top_card.substr(0,2).to_int()			
+#			#currentCardPlayed = top_rank
+#		#Check suit
+#				lastsuit = LCPlayedSuitCheck()
 		
-		print("*******************************************look here for index, opponenthand[index]********************************")	
-		for index in range(len(opponenthand)):
-			print(index, opponenthand[index])
-						
-		for ophand in opponenthand:
-			oppindex = ophand.substr(0,2).to_int()
-			#this is new section
-			if top_card:
-				top_card = discardpile[discardpile.size()]
-				top_rank = top_card.substr(0,2).to_int()			
-			#Check suit
-			if (oppindex > 21 && oppindex <= 35 && lastsuit == "wands"):
-				print("opponent play card for wands" + String(oppindex))
-				opponentsamesuit = true
-				#play the card
+		if oppindex <= 21:
+			#play the card
+			print("I should play my TRUMP card!!!")
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname#scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)	
+			
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)-1):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(index)#opponenthand[index]
+			opponentplayedacard = true
+			lastsuit = LCPlayedSuitCheck()
+			pickSuit()
+			#lsuit = LCPlayedSuitCheck()
+			#lsuit = LCPlayedSuitCheck()
+			if lastsuit:
+				get_node("Label9").text = lastsuit	
+				print(lastsuit)
+				print(" lsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuit--------------------" + lastsuit)
+			break
+		elif (oppindex > 21 && oppindex <= 35 && lastsuit == "wands"):
+			print("opponent play card for wands" + String(oppindex))
+			opponentsamesuit = true
+			#play the card
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)		
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)-1):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(index)#opponenthand[index]
+			opponentplayedacard = true
+		#	lastsuit = LCPlayedSuitCheck()
+			lastsuit= "wands"
+			break
+		elif(oppindex > 35 && oppindex <= 49 && lastsuit == "pentacles"):
+			print("opponent play card for pentacles" + String(oppindex))
+			opponentsamesuit = true
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)			
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)-1):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(index)#opponenthand[index]
+			#lastsuit = LCPlayedSuitCheck()
+			opponentplayedacard = true
+			lastsuit = "pentacles"
+			break
+			
+		elif (oppindex > 49 && oppindex <= 63 && lastsuit == "cups"):
+			print("opponent play card for cups" + String(oppindex))
+			opponentsamesuit = true	
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)-1):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(index)#opponenthand[index]
+			#lsuit = LCPlayedSuitCheck()
+			lastsuit = "cups"
+			opponentplayedacard = true
+			break
+			#play the card
+			#pass
+		elif (oppindex > 63 && oppindex <= 77 && lastsuit =="swords"):	
+			print("opponent play card for swords" + String(oppindex))
+			opponentsamesuit = true
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)			
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)-1):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(index)#opponenthand[index]
+			lastsuit = "swords"
+			#lsuit = LCPlayedSuitCheck()
+			opponentplayedacard = true
+			break
+			#check rank
+		elif(oppindex > 21 && oppindex < 78):
+			if (ophand.substr(3,4) == lastcardname.substr(3,4)):
+				print("opponent play card for rank" + String(oppindex) + "  -- for card" + lastcardname + " and " + ophand)
+				opponentsamerank = true
 				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+				get_node("Label3").text = ophand#lastcardname#playedcardname#scards[cardcount]
 				get_node("Label4").text = String(cardcount)
 				discardpile.append(ophand)		
 				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
@@ -1037,94 +925,78 @@ func opponentPlayCard():
 					print(index, opponenthand[index])
 					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
 						opponenthand.remove(index)#opponenthand[index]
-				break
-			elif(oppindex > 35 && oppindex <= 49 && lastsuit == "pentacles"):
-				print("opponent play card for pentacles" + String(oppindex))
-				opponentsamesuit = true
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)			
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)-1):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(index)#opponenthand[index]
-				break
-				
-			elif (oppindex > 49 && oppindex <= 63 && lastsuit == "cups"):
-				print("opponent play card for cups" + String(oppindex))
-				opponentsamesuit = true	
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)-1):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(index)#opponenthand[index]
-				break
-				#play the card
-				#pass
-			elif (oppindex > 63 && oppindex <= 77 && lastsuit =="swords"):	
-				print("opponent play card for swords" + String(oppindex))
-				opponentsamesuit = true
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)			
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)-1):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(index)#opponenthand[index]
-				break
-				#check rank
-			if(oppindex > 21 && oppindex < 78):
-				if (ophand.substr(3,4) == lastcardname.substr(3,4)):
-					print("opponent play card for rank" + String(oppindex) + "  -- for card" + lastcardname + " and " + ophand)
-					opponentsamerank = true
-					get_node("Sprite2").texture = actual[oppindex]
-					get_node("Label3").text = ophand#lastcardname#playedcardname#scards[cardcount]
-					get_node("Label4").text = String(cardcount)
-					discardpile.append(ophand)		
-					print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-					for index in range(len(opponenthand)-1):
-						print(index, opponenthand[index])
-						if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-							opponenthand.remove(index)#opponenthand[index]
-				break	
-			#check trump					
-			if oppindex <= 21:
-				#play the card
-				print("I should play my TRUMP card!!!")
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname#scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)	
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)-1):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(index)#opponenthand[index]
-				break
+			lastsuit = LCPlayedSuitCheck()
+			opponentplayedacard = true
+			#break	
+		#check trump					
+#		if oppindex <= 21:
+#			#play the card
+#			print("I should play my TRUMP card!!!")
+#			get_node("Sprite2").texture = actual[oppindex]
+#			get_node("Label3").text = ophand#playedcardname#scards[cardcount]
+#			get_node("Label4").text = String(cardcount)
+#			discardpile.append(ophand)	
+#			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+#			for index in range(len(opponenthand)-1):
+#				print(index, opponenthand[index])
+#				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+#					opponenthand.remove(index)#opponenthand[index]
+#			break
 
-			if(oppindex == 78):
-				#currentsuit = "none this is the deckback"
-				#print("currentsuit is ------> " + currentsuit)
-				print("deckback")
+
+#		if lastsuit == null:
+#			lastsuit = currentsuit
+#		if lastsuit != null:
+#			if lastsuit == currentsuit:
+#				samesuit = true
+#				print("the suit is the same condition ::true::")
+#			else:
+#				samesuit = false
+#				print("the suit is not the same ::false::")
+#		lastsuit = currentsuit	
+	
+			lastCardPlayed = currentCardPlayed
 		
-			oppygone = oppygone + 1
+		elif(oppindex == 78):
+			#currentsuit = "none this is the deckback"
+			#print("currentsuit is ------> " + currentsuit)
+			print("deckback")
+#		print(lastsuit)
+		print("= lastsuit")
+		#lsuit = LCPlayedSuitCheck()
+		if lastsuit:
+			get_node("Label9").text = lsuit	
+			print(lastsuit)
+			print("now current suit lsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuit" + lastsuit)
+		#	lsuit = lastsuit
+#		lsuit = LCPlayedSuitCheck()
+#		if lsuit:
+#			get_node("Label9").text = lsuit	
+#			print(lsuit)
+#			print(" lsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuit")
+#
+			
+		if opponentplayedacard == true:
+			opponentplayedacard = false
+			#break
+			
+		oppygone = oppygone + 1
 #			if(opponentsamesuit || opponentsamerank):
 #				break
-		for o in opponenthand:
-			print("new opponent hand is " + o)
-		player_turn = next_turn()				
+	for o in opponenthand:
+		print("new opponent hand is " + o)
+		
+#	lsuit = LCPlayedSuitCheck()
+#	if lsuit:
+#		get_node("Label9").text = lsuit	
+#		print(lsuit)
+#		print(" lsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuit")
+	#player_turn = next_turn()				
 		
 		# not sure if this is correct.
-#		top_card = discardpile[discardpile.size() - 1]
-#		top_rank = top_card.substr(0,2).to_int()
+	if discardpile:
+		top_card = discardpile[discardpile.size()-1]
+		top_rank = top_card.substr(0,2).to_int()
 #
 #		# check if any card in the opponent's hand has the same rank as the top card
 #		for card in opponenthand:
@@ -1142,7 +1014,7 @@ func opponentPlayCard():
 
 		#lsuit = LCPlayedSuitCheck()
 			#if lsuit != null:
-		RegularRankCheck()	
+	#RegularRankCheck()	
 				
 		
 func opponentPlayCardOriginal():
@@ -1156,47 +1028,48 @@ func opponentPlayCardOriginal():
 	#othewise pick a card I guess or skip maybe?
 	#add card to discadpile array
 	#free card in array
-		var oppygone = 0
-		print("the opphand   ")
-		#lcn = lastcardname.substr(0,2).to_int()
-		for o in opponenthand:
-			print("opponent hand is " + o)
-		
-		#for index, o in enumerate(opponenthand):
-		#	print("opponent hand is " + o + " and the index is=" + String(index))
-		#for index, item in enumerate(items):
-			#	print(index, item)
-		print("*******************************************look here for index, opponenthand[index]********************************")	
-		for index in range(len(opponenthand)):
-			print(index, opponenthand[index])
+	var oppygone = 0
+	print("the opphand   ")
+	#lcn = lastcardname.substr(0,2).to_int()
+	for o in opponenthand:
+		print("opponent hand is " + o)
+	
+	#for index, o in enumerate(opponenthand):
+	#	print("opponent hand is " + o + " and the index is=" + String(index))
+	#for index, item in enumerate(items):
+		#	print(index, item)
+	print("*******************************************look here for index, opponenthand[index]********************************")	
+	for index in range(len(opponenthand)):
+		print(index, opponenthand[index])
 			
 			
 #			for index in range(len(items)):
 #    print(index, items[index])
 			
-		for ophand in opponenthand:
-			#checksuit
-			oppindex = ophand.substr(0,2).to_int()
+	for ophand in opponenthand:
+		#checksuit
+		oppindex = ophand.substr(0,2).to_int()
 				#checkrank
 
 			
-			if(oppindex > 21 && oppindex < 78):
-				if (ophand.substr(3,4) == lastcardname.substr(3,4)):
-					print("opponent play card for rank" + String(oppindex) + "  -- for card" + lastcardname + " and " + ophand)
-					opponentsamerank = true
-					get_node("Sprite2").texture = actual[oppindex]
-					get_node("Label3").text = ophand#lastcardname#playedcardname#scards[cardcount]
-					get_node("Label4").text = String(cardcount)
-					discardpile.append(ophand)		
-					#remove_card(opponenthand, oppygone)	
-					#opponenthand.remove(ophand)
-					print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-					for index in range(len(opponenthand)):
-						print(index, opponenthand[index])
-						if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-							opponenthand.remove(ophand)#opponenthand[index]
-					break	
-							
+		if(oppindex > 21 && oppindex < 78):
+			if (ophand.substr(3,4) == lastcardname.substr(3,4)):
+				print("opponent play card for rank" + String(oppindex) + "  -- for card" + lastcardname + " and " + ophand)
+				opponentsamerank = true
+				get_node("Sprite2").texture = actual[oppindex]
+				get_node("Label3").text = ophand#lastcardname#playedcardname#scards[cardcount]
+				get_node("Label4").text = String(cardcount)
+				discardpile.append(ophand)		
+				#remove_card(opponenthand, oppygone)	
+				#opponenthand.remove(ophand)
+				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+				for index in range(len(opponenthand)):
+					print(index, opponenthand[index])
+					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+						opponenthand.remove(ophand)#opponenthand[index]
+				opponentplayedacard = true
+				#break	
+						
 #					for opped in opponenthand:
 #						if (oppindex == opped.substr(0,2).to_int()):
 #
@@ -1207,13 +1080,13 @@ func opponentPlayCardOriginal():
 					#play card of same rank
 					#pass
 					
-			if oppindex <= 21:
-				#play the card
-				print("I should play my TRUMP card!!!")
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname#scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)	
+		if oppindex <= 21:
+			#play the card
+			print("I should play my TRUMP card!!!")
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname#scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)	
 				#remove_card(opponenthand, oppygone)	
 				#opponenthand.remove(ophand)	
 #				for opped in opponenthand:
@@ -1221,12 +1094,12 @@ func opponentPlayCardOriginal():
 #						opponenthand.remove(opped)
 #						print("===========================removed)))))))))))))))))((((((((((((((((( ==" + opped)
 
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(ophand)#opponenthand[index]
-				break
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(ophand)#opponenthand[index]
+			break
 				#next_turn()	
 				###break				#maybeneed to break here
 #			if oppindex <= 21:
@@ -1239,101 +1112,101 @@ func opponentPlayCardOriginal():
 #				opponenthand.remove(oppygone)	
 #				next_turn()	
 #				break
-			if (oppindex > 21 && oppindex <= 35 && lastsuit == "wands"):
-				print("opponent play card for wands" + String(oppindex))
-				opponentsamesuit = true
+		if (oppindex > 21 && oppindex <= 35 && lastsuit == "wands"):
+			print("opponent play card for wands" + String(oppindex))
+			opponentsamesuit = true
 				#play the card
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)			
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)			
 				#remove_card(opponenthand, oppygone)
 #				opponenthand.remove(ophand)
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(ophand)#opponenthand[index]
-						
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(ophand)#opponenthand[index]
+					
 #				for opped in opponenthand:
 #					if (oppindex == opped.substr(0,2).to_int()):
 #						opponenthand.remove(opped)
 #						print("===========================removed)))))))))))))))))((((((((((((((((( ==" + opped)
 				#next_turn()
-				break
+			break
 				#pass
-			if(oppindex > 35 && oppindex <= 49 && lastsuit == "pentacles"):
-				print("opponent play card for pentacles" + String(oppindex))
-				opponentsamesuit = true
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)			
-				#remove_card(opponenthand, oppygone)
-#				opponenthand.remove(ophand)
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(ophand)#opponenthand[index]
+		if(oppindex > 35 && oppindex <= 49 && lastsuit == "pentacles"):
+			print("opponent play card for pentacles" + String(oppindex))
+			opponentsamesuit = true
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)			
+			#remove_card(opponenthand, oppygone)
+			opponenthand.remove(ophand)
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(ophand)#opponenthand[index]
 #				for opped in opponenthand:
 #					if (oppindex == opped.substr(0,2).to_int()):
 #						opponenthand.remove(opped)
 #						print("===========================removed)))))))))))))))))((((((((((((((((( ==" + opped)
 #				#next_turn()
-				break
+			break
 				#play the card
 				#pass
 				
-			if (oppindex > 49 && oppindex <= 63 && lastsuit == "cups"):
-				print("opponent play card for cups" + String(oppindex))
-				opponentsamesuit = true	
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)
-				#remove_card(opponenthand, oppygone)
-#				opponenthand.remove(ophand)
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(ophand)#opponenthand[index]
+		if (oppindex > 49 && oppindex <= 63 && lastsuit == "cups"):
+			print("opponent play card for cups" + String(oppindex))
+			opponentsamesuit = true	
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)
+			#remove_card(opponenthand, oppygone)
+#			opponenthand.remove(ophand)
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(ophand)#opponenthand[index]
 #				for opped in opponenthand:
 #					if (oppindex == opped.substr(0,2).to_int()):
 #						opponenthand.remove(opped)
 #						print("===========================removed)))))))))))))))))((((((((((((((((( ==" + opped)
 #				#next_turn()
-				break
+			break
 				#play the card
 				#pass
-			if (oppindex > 63 && oppindex <= 77 && lastsuit =="swords"):	
-				print("opponent play card for swords" + String(oppindex))
-				opponentsamesuit = true
-				get_node("Sprite2").texture = actual[oppindex]
-				get_node("Label3").text = ophand#playedcardname# scards[cardcount]
-				get_node("Label4").text = String(cardcount)
-				discardpile.append(ophand)			
-				#remove_card(opponenthand, oppygone)
-#				opponenthand.remove(ophand)
-				print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
-				for index in range(len(opponenthand)):
-					print(index, opponenthand[index])
-					if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
-						opponenthand.remove(ophand)#opponenthand[index]
+		if (oppindex > 63 && oppindex <= 77 && lastsuit =="swords"):	
+			print("opponent play card for swords" + String(oppindex))
+			opponentsamesuit = true
+			get_node("Sprite2").texture = actual[oppindex]
+			get_node("Label3").text = ophand#playedcardname# scards[cardcount]
+			get_node("Label4").text = String(cardcount)
+			discardpile.append(ophand)			
+			#remove_card(opponenthand, oppygone)
+#			opponenthand.remove(ophand)
+			print("IN FUNCTION JUNCTION *******************************************look here for index, opponenthand[index]********************************")	
+			for index in range(len(opponenthand)):
+				print(index, opponenthand[index])
+				if(ophand.substr(0,2) == opponenthand[index].substr(0,2)):
+					opponenthand.remove(ophand)#opponenthand[index]
 #				for opped in opponenthand:
 #					if (oppindex == opped.substr(0,2).to_int()):
 #						opponenthand.remove(opped)
 #						print("===========================removed)))))))))))))))))((((((((((((((((( ==" + opped)
 				#next_turn()
-				break
+			break
 				#play the card
 				#pass
 			#else:
-			if(oppindex == 78):
-				#currentsuit = "none this is the deckback"
-				#print("currentsuit is ------> " + currentsuit)
-				print("deckback")
+		if(oppindex == 78):
+			#currentsuit = "none this is the deckback"
+			#print("currentsuit is ------> " + currentsuit)
+			print("deckback")
 			
 #			if(opponentsamesuit == true || opponentsamerank == true):
 #				print(String(oppindex) + "-oppindex-" + ophand)
@@ -1345,12 +1218,12 @@ func opponentPlayCardOriginal():
 #				break
 			#maybe play card at end of function
 			
-			oppygone = oppygone + 1
-			if(opponentsamesuit || opponentsamerank):
-				break
-		for o in opponenthand:
-			print("new opponent hand is " + o)
-			#player = next_turn()				
+		oppygone = oppygone + 1
+		if(opponentsamesuit || opponentsamerank):
+			break
+	for o in opponenthand:
+		print("new opponent hand is " + o)
+	#player_turn = next_turn()				
 				
 		
 		
@@ -1491,13 +1364,115 @@ func remove_card(opponent, card):
 ##	else:
 ##		print("Opponent has already removed this card.")
 		
+func playerpickSuit():
+	print("Suit will be picked.")
+	#lsuit = LCPlayedSuitCheck()
+	var rand_int = rand_generate.randi_range(1,4)
+	# print random number
+	#print (rand_int)
+
+	if rand_int == 1:
+		lsuit = "wands"
+	if rand_int == 2:
+		lsuit = "pentacles"
+	if rand_int == 3:
+		lsuit = "cups"
+	if rand_int == 4:
+		lsuit = "swords"
+	lsuit = "wands+wands"
+	if lsuit:
+		get_node("Label9").text = "The suit is " + lsuit	
+	#var rand_int = rand_generate.randi_range(1,4)
+	# print random number
+	print(String(rand_int) + " is random for " + lsuit + " lsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuit")		
+		
+		
 		
 			
 func pickSuit():
 	print("Suit will be picked.")
-	pass
-#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-			
+	#lsuit = LCPlayedSuitCheck()
+	var rand_int = rand_generate.randi_range(1,4)
+	# print random number
+	#print (rand_int)
+
+	if rand_int == 1:
+		lsuit = "wands"
+		wands = true
+		print("wands picked")
+		trumps = false
+		pentacles = false
+		cups = false
+		swords = false
+		currentsuit = "wands"
+#		get_node("Label9").text = "wands"
+	if rand_int == 2:
+		lsuit = "pentacles"
+		pentacles = true
+		print("pentacles picked")
+		trumps = false
+		wands = false
+		cups = false
+		swords = false
+		currentsuit = "pentacles"
+	##	get_node("Label9").text = "pentacles"
+	if rand_int == 3:
+		lsuit = "cups"
+		cups = true
+		print("cups picked")
+		trumps = false
+		wands = false
+		pentacles = false
+		swords = false
+		currentsuit = "cups"
+	##	get_node("Label9").text = "cups"
+	if rand_int == 4:
+		lsuit = "swords"
+		swords = true
+		print("swords picked")
+		trumps = false
+		wands = false
+		pentacles = false
+		cups = false
+		currentsuit = "swords"
+#		get_node("Label9").text = "swords"		
+	if lsuit:
+		get_node("Label9").text = "The suit is " + lsuit	
+	#var rand_int = rand_generate.randi_range(1,4)
+	# print random number
+	print(String(rand_int) + " is random for " + lsuit + " lsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuitlsuit")
+	
+	if currentCardPlayed:
+		if currentCardPlayed >= len(scards)-1:#################:
+			print("Error: currentCardPlayed is out of bounds")
+			return ""
+		print(String(currentCardPlayed) + " " + scards[currentCardPlayed] + "+++++")
+
+	if lastsuit == null:
+		lastsuit = currentsuit
+		if lastsuit != null:
+			if lastsuit == currentsuit:
+				samesuit = true
+				print("the suit is the same condition ::true::")
+			else:
+				samesuit = false
+				print("the suit is not the same ::false::")
+		#lastsuit = currentsuit	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 			
 func get_resized_texture(t: Texture, width: int = 0, height: int = 0):
 		var image = t.get_data()
